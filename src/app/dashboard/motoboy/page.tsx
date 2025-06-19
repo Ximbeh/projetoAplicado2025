@@ -19,7 +19,7 @@ export default function DashboardMotoboy() {
     router.push("motoboy/novosPedidos");
   };
   const handlePedidosAtivos = () => {
-    router.push("motoboy/pedidosAtivos");
+    console.log("pedidos ativos");
   };
   const handleHistorico = () => {
     router.push("motoboy/historicoPedidos");

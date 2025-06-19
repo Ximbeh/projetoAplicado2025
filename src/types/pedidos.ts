@@ -20,10 +20,8 @@ export interface Pedido {
 
 export enum PedidoStatus {
   Pendente = "Pendente",
-  AguardandoEntregador = "AguardandoEntregador",
-  ACaminho = "ACaminho",
   EmTransporte = "EmTransporte",
-  Falhou = "Falhou",
+  AguardandoPagamento = "AguardandoPagamento",
   Cancelado = "Cancelado",
   Concluido = "Concluido",
 }

@@ -55,7 +55,7 @@ export const pedidos: Pedido[] = [
     numero_destino: "1000",
     complemento_destino: "Cobertura",
     preco_final: 15.0,
-    status: PedidoStatus.AguardandoEntregador,
+    status: PedidoStatus.AguardandoPagamento,
     data_criacao: "2024-06-03T09:15:00",
   },
   {
