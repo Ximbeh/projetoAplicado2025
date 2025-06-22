@@ -5,7 +5,7 @@ import axios from "axios";
 import type { Pedido } from "../../types/pedidos";
 
 async function fetchPedidos(): Promise<Pedido[]> {
-  const { data } = await axios.get<{ pedidos: Pedido[] }>("/api/pedidos");
+  const { data } = await axios.get<{ pedidos: Pedido[] }>("http://localhost:3333/api");
   return data.pedidos;
 }
 

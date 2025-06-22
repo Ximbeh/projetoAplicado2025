@@ -7,7 +7,7 @@ import PhaseOneNovoPedido from "@/components/novoPedido/phaseOne";
 import PhaseThreeNovoPedido from "@/components/novoPedido/phaseThree";
 import PhaseTwoNovoPedido from "@/components/novoPedido/phaseTwo";
 import Title from "@/components/ui/Title";
-import { Container, Stack, Typography } from "@mui/material";
+import { Container, Stack,} from "@mui/material";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -50,7 +50,7 @@ export default function NovoPedido() {
       const data = methods.getValues();
 
       try {
-        await axios.post("/api/signup", data);
+        await axios.post("http://localhost:3333/api/login/usuario", data);
         setStep(5); // Sucesso
       } catch (error) {
         console.error("Erro ao cadastrar:", error);

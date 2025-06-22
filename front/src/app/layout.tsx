@@ -2,7 +2,7 @@
 "use client";
 
 import { ReactNode, useEffect, useState } from "react";
-import { makeServer } from "@/mirage/server";
+// import { makeServer } from "@/mirage/server";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import theme from "@/theme/theme";
 import { SnackbarProvider } from "notistack";
@@ -13,15 +13,15 @@ let server: any = null;
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  useEffect(() => {
-    if (
-      process.env.NODE_ENV === "development" &&
-      typeof window !== "undefined" &&
-      !server
-    ) {
-      server = makeServer();
-    }
-  }, []);
+  //useEffect(() => {
+    //if (
+    //  process.env.NODE_ENV === "development" &&
+    //  typeof window !== "undefined" &&
+    //  !server
+   // ) {
+    //  server = makeServer();
+    //}
+ // );
   const [queryClient] = useState(() => new QueryClient());
 
   return (

@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "projetoAplicado2025-1",
+			"path": "."
+		},
+		{
+			"name": "beckend",
+			"path": "../projetoAplicado2025/beckend"
+		}
+	],
+	"settings": {}
+}

@@ -1,16 +1,15 @@
+// src/controllers/pedidoController.js
 const pool = require('../config/db');
 const path = require('path');
 const fs = require('fs');
 
-// Criar novo pedido
+// Criar pedido com cálculo de preço
 exports.criarPedido = async (req, res, next) => {
   try {
     const { cliente_id, peso, distancia_km, tempo_estimado } = req.body;
 
-    const [[{ preco }]] = await pool.query(
-      'SELECT calcular_preco(?, ?, ?) AS preco',
-      [peso, distancia_km, tempo_estimado]
-    );
+    // Cálculo do preço no backend
+    const preco = (peso * 0.5) + (distancia_km * 1.2) + (tempo_estimado * 0.3);
 
     const [result] = await pool.query(
       `INSERT INTO Pedidos (cliente_id, peso, distancia_km, tempo_estimado, preco)
@@ -19,15 +18,14 @@ exports.criarPedido = async (req, res, next) => {
     );
 
     await pool.query(
-      `INSERT INTO HistoricoEntregas (pedido_id, status)
-       VALUES (?, 'criado')`,
+      `INSERT INTO HistoricoEntregas (pedido_id, status) VALUES (?, 'criado')`,
       [result.insertId]
     );
 
     res.status(201).json({
       success: true,
       message: 'Pedido criado com sucesso',
-      id_pedido: result.insertId
+      id: result.insertId
     });
   } catch (err) {
     next(err);
@@ -38,7 +36,28 @@ exports.criarPedido = async (req, res, next) => {
 exports.listarPedidos = async (req, res, next) => {
   try {
     const [pedidos] = await pool.query('SELECT * FROM Pedidos');
-    res.json({ success: true, data: pedidos });
+
+    const pedidosFormatados = pedidos.map(pedido => ({
+      id: pedido.id_pedido,
+      id_usuario: pedido.cliente_id,
+      id_entregador: pedido.motoboy_id || null,
+      id_entregadoresRecusado: [],
+      conteudo: '',
+      peso: pedido.peso,
+      cep_origem: '',
+      logradouro_origem: '',
+      numero_origem: '',
+      complemento_origem: '',
+      cep_destino: '',
+      logradouro_destino: '',
+      numero_destino: '',
+      complemento_destino: '',
+      preco_final: pedido.preco,
+      status: pedido.status,
+      data_criacao: pedido.data_criacao
+    }));
+
+    res.json({ success: true, data: pedidosFormatados });
   } catch (err) {
     next(err);
   }
@@ -48,6 +67,7 @@ exports.listarPedidos = async (req, res, next) => {
 exports.filtrarPedidos = async (req, res, next) => {
   try {
     const { cliente_id, motoboy_id, status } = req.query;
+
     let query = 'SELECT * FROM Pedidos WHERE 1=1';
     const params = [];
 
@@ -66,26 +86,26 @@ exports.filtrarPedidos = async (req, res, next) => {
       params.push(status);
     }
 
-    const [result] = await pool.query(query, params);
-    res.json({ success: true, data: result });
+    const [pedidos] = await pool.query(query, params);
+    res.json({ success: true, data: pedidos });
   } catch (err) {
     next(err);
   }
 };
 
-// Atualizar status do pedido
+// Atualizar status e registrar no histórico
 exports.atualizarStatus = async (req, res, next) => {
   try {
-    const { id_pedido, status, motoboy_id } = req.body;
+    const { pedido_id, status } = req.body;
 
     await pool.query(
-      `UPDATE Pedidos SET status = ?, motoboy_id = ? WHERE id_pedido = ?`,
-      [status, motoboy_id || null, id_pedido]
+      `UPDATE Pedidos SET status = ? WHERE id_pedido = ?`,
+      [status, pedido_id]
     );
 
     await pool.query(
       `INSERT INTO HistoricoEntregas (pedido_id, status) VALUES (?, ?)`,
-      [id_pedido, status]
+      [pedido_id, status]
     );
 
     res.json({ success: true, message: 'Status atualizado com sucesso' });
@@ -94,53 +114,43 @@ exports.atualizarStatus = async (req, res, next) => {
   }
 };
 
-// Histórico de entregas
+// Histórico de um pedido
 exports.historicoPedido = async (req, res, next) => {
   try {
     const { id_pedido } = req.params;
+
     const [historico] = await pool.query(
-      'SELECT * FROM HistoricoEntregas WHERE pedido_id = ? ORDER BY data_mudanca',
+      `SELECT * FROM HistoricoEntregas WHERE pedido_id = ? ORDER BY data_status ASC`,
       [id_pedido]
     );
+
     res.json({ success: true, data: historico });
   } catch (err) {
     next(err);
   }
 };
 
-// Concluir pedido com imagem base64
+// Concluir pedido com imagem base64 (simulada)
 exports.concluirPedido = async (req, res, next) => {
   try {
-    const { id_pedido, imagem_base64 } = req.body;
+    const { pedido_id, imagemBase64 } = req.body;
 
-    if (!id_pedido || !imagem_base64) {
-      return res.status(400).json({ success: false, message: 'Dados obrigatórios ausentes' });
-    }
-
-    const base64Data = imagem_base64.replace(/^data:image\/\w+;base64,/, '');
-    const buffer = Buffer.from(base64Data, 'base64');
-
-    const nomeArquivo = `comprovante_${id_pedido}_${Date.now()}.jpg`;
-    const caminho = path.join(__dirname, '..', '..', 'uploads', nomeArquivo);
-
-    fs.writeFileSync(caminho, buffer);
+    // Simulação de salvamento de imagem base64
+    const imagemBuffer = Buffer.from(imagemBase64, 'base64');
+    const filePath = path.join(__dirname, `../../uploads/comprovante_${pedido_id}.png`);
+    fs.writeFileSync(filePath, imagemBuffer);
 
     await pool.query(
-      `UPDATE Pedidos 
-       SET status = 'entregue',
-           comprovante_entrega = ?, 
-           data_finalizacao = NOW()
-       WHERE id_pedido = ?`,
-      [nomeArquivo, id_pedido]
+      `UPDATE Pedidos SET status = 'entregue' WHERE id_pedido = ?`,
+      [pedido_id]
     );
 
     await pool.query(
       `INSERT INTO HistoricoEntregas (pedido_id, status) VALUES (?, 'entregue')`,
-      [id_pedido]
+      [pedido_id]
     );
 
     res.json({ success: true, message: 'Pedido concluído com sucesso' });
-
   } catch (err) {
     next(err);
   }

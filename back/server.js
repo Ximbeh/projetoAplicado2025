@@ -1,4 +1,7 @@
+
 const express = require('express');
+const cors = require('cors');
+const app = express();
 const dotenv = require('dotenv');
 const path = require('path');
 
@@ -10,7 +13,10 @@ const errorHandler = require('./src/middlewares/errorHandler');
 
 dotenv.config();
 
-const app = express();
+app.use(cors({
+  origin: "http://localhost:3000", // libera só pro frontend local
+  credentials: true // se for usar cookies ou autenticação com sessões
+}));
 
 // Middlewares
 app.use(express.json());
@@ -34,7 +40,7 @@ app.get('/', (req, res) => {
 app.use(errorHandler);
 
 // Iniciar servidor
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3333;
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });

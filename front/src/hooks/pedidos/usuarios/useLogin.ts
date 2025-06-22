@@ -8,13 +8,19 @@ type LoginData = {
 };
 
 async function postLogin(data: LoginData) {
-  const res = await fetch("/api/login", {
+ 
+ console.log(data)
+
+  const res = await fetch("http://localhost:3333/api/login/usuario", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) throw new Error("Credenciais inválidas");
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || "Credenciais inválidas");
+  }
 
   return res.json();
 }
@@ -26,25 +32,26 @@ export function useLogin() {
   return useMutation({
     mutationFn: postLogin,
     onSuccess: (data) => {
-      const { id, username, password, category } = data.usuario;
-      localStorage.setItem(
-        "usuarioLogado",
-        JSON.stringify({ id, username, password, category })
-      );
+      const usuario = data.usuario;
+
+      // Armazena no localStorage
+      localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
       enqueueSnackbar("Login bem-sucedido!", { variant: "success" });
 
-      switch (data.usuario.category) {
-        case "cliente":
-          router.push("/dashboard/cliente");
-          break;
-        case "motoboy":
-          router.push("/dashboard/motoboy");
-          break;
-        case "admin":
-          router.push("/dashboard/admin");
-          break;
-        default:
-          enqueueSnackbar("Categoria desconhecida!", { variant: "error" });
+      // Redireciona com base no tipo
+      if (usuario.entregador) {
+        router.push("/dashboard/motoboy");
+      } else {
+        switch (usuario.tipo) {
+          case "cliente":
+            router.push("/dashboard/cliente");
+            break;
+          case "admin":
+            router.push("/dashboard/admin");
+            break;
+          default:
+            enqueueSnackbar("Tipo de usuário desconhecido!", { variant: "error" });
+        }
       }
     },
     onError: (err: Error) => {
