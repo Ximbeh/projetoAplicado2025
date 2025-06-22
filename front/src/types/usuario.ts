@@ -8,6 +8,6 @@ export type Usuario = {
   placa?: string;
   chassi?: string;
   cnh?: string;
-  entregador: boolean;
+  category: string;
   senha: string;
 };

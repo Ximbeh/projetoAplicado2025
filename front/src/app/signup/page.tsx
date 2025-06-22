@@ -31,7 +31,7 @@ export default function SignupPage() {
       cnh: "",
       email: "",
       senha: "",
-      entregador: true,
+      category: "",
     },
   });
 
@@ -53,7 +53,7 @@ export default function SignupPage() {
   };
 
   const back = () => setStep((prev) => Math.max(prev - 1, 1));
-  const goToLogin = () => router.push("/login");
+  const goToLogin = () => router.push("/");
 
   return (
     <FormProvider {...methods}>

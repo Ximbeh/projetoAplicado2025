@@ -63,30 +63,25 @@ export default function LoginPage() {
               label="Senha"
               type="password"
               error={!!errors.senha}
-              helperText={
-                errors.senha?.message ? (
-                  errors.senha.message
-                ) : (
-                  <Link href="recuperacao" passHref>
-                    <Typography
-                      fontSize={12}
-                      component="span"
-                      sx={{
-                        color: "primary.main",
-                        textDecoration: "none",
-                        "&:hover": {
-                          textDecoration: "underline",
-                        },
-                        cursor: "pointer",
-                      }}
-                    >
-                      Esqueceu a senha?
-                    </Typography>
-                  </Link>
-                )
-              }
+              helperText={errors.senha?.message}
               {...register("senha", { required: "Senha é obrigatória" })}
             />
+            {/* to-do: Recuperacao de senha */}
+            {/* <Link href="/recuperacao">
+              <Typography
+                fontSize={12}
+                sx={{
+                  color: "primary.main",
+                  textDecoration: "none",
+                  "&:hover": {
+                    textDecoration: "underline",
+                  },
+                  alignSelf: "flex-start",
+                }}
+              >
+                Esqueceu a senha?
+              </Typography>
+            </Link> */}
 
             <LongButton label="Entrar" type="submit" />
 
