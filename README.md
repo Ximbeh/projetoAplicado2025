@@ -89,9 +89,6 @@ $ cd seu-repositorio/backend
 # Instale as dependências
 $ npm install
 
-# Crie um arquivo .env com base no .env.example e configure suas variáveis
-$ cp .env.example .env
-
 # Execute as migrations do banco de dados (se aplicável)
 $ npm run migrate
 
