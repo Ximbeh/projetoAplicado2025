@@ -13,7 +13,6 @@ Projeto desenvolvido para a Unidade Curricular de **Projeto Aplicado II** do Cur
 - [🚀 Como Executar o Projeto](#-como-executar-o-projeto)
 - [📈 Modelagem do Sistema](#-modelagem-do-sistema)
 - [🧑‍💻 Equipe](#-equipe)
-- [📄 Licença](#-licença)
 
 ## 📖 Sobre o Projeto
 
@@ -95,3 +94,24 @@ $ npm run migrate
 # Inicie o servidor
 $ npm run dev
 # O servidor iniciará na porta:3333 - acesse http://localhost:3333
+```
+
+📈 Modelagem do Sistema
+Diagrama de Entidade e Relacionamento (DER)
+O diagrama abaixo representa a estrutura do banco de dados, com suas principais entidades e relacionamentos.
+
+![Diagrama ER](![DER_Final](https://github.com/user-attachments/assets/28efbb5a-435c-40f2-a2e2-fbf82ead02bd)
+)
+
+Diagrama de Caso de Uso (Use Case)
+Este diagrama ilustra as interações dos diferentes atores com as funcionalidades do sistema.
+
+![Diagrama de Caso de Uso]([./docs/use-case.png](https://lucid.app/lucidchart/2cb7e043-0f4b-45cd-aa09-4679f27c9bf3/edit?invitationId=inv_6e41ae99-224d-47d4-8084-6ebac29f45fe))
+
+🧑‍💻 Equipe
+Este projeto foi elaborado e desenvolvido por:
+
+Bruno Goulart Garcia 
+Tiago Martins Rodrigues Joao 
+Bernardo Gomez Karsten 
+Caire de Marco Maia 
