@@ -116,14 +116,18 @@ export default function PedidoPage() {
             />
             <InfoDoubleText title={"Status:"} info={pedido.status} />
             <InfoDoubleText
-              title={"Preço final estimado:"}
-              info={"R$29,00"}
+              title="Preço final estimado:"
+              info={
+                pedido.preco_final != null
+                  ? `R$${pedido.preco_final}`
+                  : "Preço não calculado"
+              }
               bigInfo={true}
               extra={<InfoIconWithModal />}
             />
           </Box>
 
-          {usuario?.category === "cliente" && (
+          {usuario?.tipo === "cliente" && (
             <>
               <DualButton
                 onNext={handleRepetir}
@@ -136,7 +140,7 @@ export default function PedidoPage() {
             </>
           )}
 
-          {usuario?.category === "motoboy" && (
+          {usuario?.tipo === "motoboy" && (
             <>
               {pedido.status === PedidoStatus.Concluido ? (
                 <LongButton label="Voltar" onClick={onBack} />
@@ -153,7 +157,7 @@ export default function PedidoPage() {
             </>
           )}
 
-          {usuario?.category === "admin" && (
+          {usuario?.tipo === "admin" && (
             <>
               <DualButton
                 onNext={handleExcluir}

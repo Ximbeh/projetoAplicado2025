@@ -3,13 +3,12 @@ import { useRouter } from "next/navigation";
 import { useSnackbar } from "notistack";
 
 type LoginData = {
-  username: string;
-  password: string;
+  email: string;
+  senha: string;
 };
 
 async function postLogin(data: LoginData) {
- 
- console.log(data)
+  console.log(data);
 
   const res = await fetch("http://localhost:3333/api/login/usuario", {
     method: "POST",
@@ -33,13 +32,14 @@ export function useLogin() {
     mutationFn: postLogin,
     onSuccess: (data) => {
       const usuario = data.usuario;
+      const token = data.token;
 
-      // Armazena no localStorage
+      localStorage.setItem("token", token);
       localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
       enqueueSnackbar("Login bem-sucedido!", { variant: "success" });
 
       // Redireciona com base no tipo
-      if (usuario.entregador) {
+      if (usuario.tipo === "motoboy") {
         router.push("/dashboard/motoboy");
       } else {
         switch (usuario.tipo) {
@@ -50,7 +50,9 @@ export function useLogin() {
             router.push("/dashboard/admin");
             break;
           default:
-            enqueueSnackbar("Tipo de usuário desconhecido!", { variant: "error" });
+            enqueueSnackbar("Tipo de usuário desconhecido!", {
+              variant: "error",
+            });
         }
       }
     },

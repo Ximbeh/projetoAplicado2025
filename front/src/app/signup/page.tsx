@@ -31,7 +31,7 @@ export default function SignupPage() {
       cnh: "",
       email: "",
       senha: "",
-      entregador: true,
+      tipo: "",
     },
   });
 
