@@ -30,7 +30,8 @@ export default function PhaseFiveNovoPedido({ onNext, onBack, onMenu }: Props) {
         backLabel="Menu"
         nextLabel="Novo Pedido"
       />
-      <LongButton label="Acompanhar" onClick={onMenu} />
+      {/* to-do: Botao acompanhar */}
+      {/* <LongButton label="Acompanhar" onClick={onMenu} /> */}
     </>
   );
 }

@@ -1,40 +1,28 @@
-// src/app/layout.tsx
-"use client";
-
-import { ReactNode, useEffect, useState } from "react";
-// import { makeServer } from "@/mirage/server";
-import { CssBaseline, ThemeProvider } from "@mui/material";
-import theme from "@/theme/theme";
-import { SnackbarProvider } from "notistack";
+import { ReactNode } from "react";
 import { Inter } from "next/font/google";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Providers from "./providers/index";
 
-let server: any = null;
 const inter = Inter({ subsets: ["latin"] });
 
-export default function RootLayout({ children }: { children: ReactNode }) {
-  //useEffect(() => {
-    //if (
-    //  process.env.NODE_ENV === "development" &&
-    //  typeof window !== "undefined" &&
-    //  !server
-   // ) {
-    //  server = makeServer();
-    //}
- // );
-  const [queryClient] = useState(() => new QueryClient());
+export const metadata = {
+  title: "Seu App",
+  description: "Descrição do seu app",
+};
 
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR" className={inter.className}>
       <body>
-        <SnackbarProvider maxSnack={3}>
-          <ThemeProvider theme={theme}>
-            <QueryClientProvider client={queryClient}>
-              <CssBaseline />
-              {children}
-            </QueryClientProvider>
-          </ThemeProvider>
-        </SnackbarProvider>
+        <Providers>{children}</Providers>
+        <style>
+          {`
+            nextjs-portal {
+              display: none !important;
+              visibility: hidden !important;
+              pointer-events: none !important;
+            }
+          `}
+        </style>
       </body>
     </html>
   );
