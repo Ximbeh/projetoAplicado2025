@@ -7,26 +7,29 @@ exports.loginUsuario = async (req, res, next) => {
   try {
     const { email, senha } = req.body;
 
-    const [[usuario]] = await pool.query('SELECT * FROM Usuarios WHERE email = ?', [email]);
+    const [[usuario]] = await pool.query(
+      'SELECT * FROM Usuarios WHERE email = ? AND tipo IN (?, ?)',
+      [email, 'cliente', 'admin']
+    );
 
     if (!usuario) {
       return res.status(404).json({ success: false, message: 'Usuário não encontrado' });
     }
 
-    const senhaCorreta = await bcrypt.compare(senha, usuario.senha_hash);
+    const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
     if (!senhaCorreta) {
       return res.status(401).json({ success: false, message: 'Senha incorreta' });
     }
 
-  const payload = {
-  id: usuario.id_usuario,
-  nome: usuario.nome,
-  cpf: usuario.cpf,
-  telefone: usuario.telefone,
-  email: usuario.email,
-  entregador: false,
-  tipo: usuario.tipo, // Adiciona o tipo (cliente ou admin)
-};
+    const payload = {
+      id: usuario.id_usuario,
+      nome: usuario.nome,
+      cpf: usuario.cpf,
+      telefone: usuario.telefone,
+      email: usuario.email,
+      entregador: false,
+      tipo: usuario.tipo
+    };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET || 'segredo123', {
       expiresIn: '2h'
@@ -43,28 +46,32 @@ exports.loginMotoboy = async (req, res, next) => {
   try {
     const { email, senha } = req.body;
 
-    const [[motoboy]] = await pool.query('SELECT * FROM Motoboys WHERE email = ?', [email]);
+    const [[motoboy]] = await pool.query(
+      'SELECT * FROM Usuarios WHERE email = ? AND tipo = ?',
+      [email, 'motoboy']
+    );
 
     if (!motoboy) {
       return res.status(404).json({ success: false, message: 'Motoboy não encontrado' });
     }
 
-    const senhaCorreta = await bcrypt.compare(senha_hash, motoboy.senha_hash);
+    const senhaCorreta = await bcrypt.compare(senha, motoboy.senha);
     if (!senhaCorreta) {
       return res.status(401).json({ success: false, message: 'Senha incorreta' });
     }
 
     const payload = {
-      id: motoboy.id_motoboys,
+      id: motoboy.id_usuario,
       nome: motoboy.nome,
       cpf: motoboy.cpf,
       telefone: motoboy.telefone,
       email: motoboy.email,
       tipoVeiculo: motoboy.tipo_veiculo,
-      placa: motoboy.placa,
+      placa: motoboy.placa_moto,
       chassi: motoboy.chassi,
       cnh: motoboy.cnh,
       entregador: true,
+      tipo: motoboy.tipo
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET || 'segredo123', {
@@ -72,7 +79,6 @@ exports.loginMotoboy = async (req, res, next) => {
     });
 
     res.json({ success: true, token, usuario: payload });
-    
   } catch (err) {
     next(err);
   }

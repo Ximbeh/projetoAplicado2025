@@ -9,16 +9,13 @@ router.post('/pedidos', auth, pedidoController.criarPedido);
 // Listar todos os pedidos
 router.get('/pedidos', auth, pedidoController.listarPedidos);
 
-// Filtrar pedidos por cliente, motoboy ou status
-router.get('/pedidos/filtro', auth, pedidoController.filtrarPedidos);
-
-// Atualizar status de pedido e salvar histórico
+// Atualizar status de pedido e registrar no histórico
 router.put('/pedidos/status', auth, pedidoController.atualizarStatus);
 
-// Ver histórico de um pedido
+// Consultar histórico de um pedido específico
 router.get('/pedidos/:id_pedido/historico', auth, pedidoController.historicoPedido);
 
-// Concluir pedido (enviar imagem base64 + marcar como entregue)
+// Concluir pedido com comprovante (imagem base64)
 router.put('/pedidos/concluir', auth, pedidoController.concluirPedido);
 
 module.exports = router;

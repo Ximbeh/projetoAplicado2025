@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const loginController = require('../controllers/loginController');
 
-// Rota para login de usuário comum (cliente/admin)
+// Login de usuário comum (cliente ou admin)
 router.post('/login/usuario', loginController.loginUsuario);
 
-// Rota para login de motoboy
+// Login de motoboy
 router.post('/login/motoboy', loginController.loginMotoboy);
 
 module.exports = router;

@@ -4,7 +4,7 @@ import { useSnackbar } from "notistack";
 
 type LoginData = {
   username: string;
-  password: string;
+  passowrd: string;
 };
 
 async function postLogin(data: LoginData) {
