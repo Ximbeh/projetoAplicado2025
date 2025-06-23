@@ -35,6 +35,8 @@ export default function PedidoAndamento() {
   const handlePrevPage = () => setPage((p) => Math.max(p - 1, 1));
   const handleNextPage = () => setPage((p) => Math.min(p + 1, totalPages));
 
+  console.log(pedidos);
+
   return (
     <>
       <HeaderIcon />

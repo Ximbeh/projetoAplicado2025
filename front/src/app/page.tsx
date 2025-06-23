@@ -28,7 +28,7 @@ export default function LoginPage() {
   const { mutate: login } = useLogin();
 
   const onSubmit = (data: LoginFormData) => {
-    login({ username: data.email, password: data.senha });
+    login({ email: data.email, senha: data.senha });
   };
 
   const handleSignupRedirect = () => {

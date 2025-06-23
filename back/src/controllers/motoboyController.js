@@ -18,12 +18,12 @@ exports.criarMotoboy = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Email já cadastrado' });
     }
 
-    const senhaHash = await bcrypt.hash(senha, 10);
+    const senha_hash = await bcrypt.hash(senha, 10);
 
     const [result] = await pool.query(
       `INSERT INTO Motoboys (nome, cpf, email, senha_hash, telefone, endereco, cnh, placa_moto, dados_bancarios)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [nome, cpf, email, senhaHash, telefone || '', endereco || '', cnh, placa_moto, dados_bancarios || '']
+      [nome, cpf, email, senha_hash, telefone || '', endereco || '', cnh, placa_moto, dados_bancarios || '']
     );
 
     res.status(201).json({

@@ -24,7 +24,7 @@ export default function NovosPedidos() {
   const idUsuario = Number(usuarioLogado?.id);
 
   const pedidosFiltrados = pedidosList.filter((pedido) => {
-    const pedidoLivre = pedido.id_entregador === undefined;
+    const pedidoLivre = pedido.id_entregador === null;
 
     const usuarioNaoRecusou =
       !Array.isArray(pedido.id_entregadoresRecusado) ||

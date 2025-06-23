@@ -3,12 +3,11 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const auth = require('../middlewares/authMiddleware');
 
-// Rotas de usuário
+// Rotas de usuários
 router.get('/user', userController.getAllUsers);
 router.post('/signup', userController.signup);
-router.post('/login', userController.login);
-router.put('/editarUsuario', userController.editarUsuario);
-router.delete('/deletarUsuario', userController.deletarUsuario);
+router.put('/editarUsuario', auth, userController.editarUsuario);
+router.delete('/deletarUsuario', auth, userController.deletarUsuario);
 router.put('/usuario/alterarSenha', auth, userController.alterarSenha);
 
-module.exports = router;
+module.exports = router
