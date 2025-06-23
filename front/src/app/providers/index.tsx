@@ -5,7 +5,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { SnackbarProvider } from "notistack";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import theme from "@/theme/theme";
-import { makeServer } from "@/mirage/server";
+import { makeServer } from "@/mirage";
 
 let server: any = null;
 

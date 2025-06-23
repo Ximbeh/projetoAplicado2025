@@ -8,7 +8,6 @@ import PhaseThree from "../../components/signup/phases/PhaseThree";
 import PhaseFour from "../../components/signup/phases/PhaseFour";
 import { useRouter } from "next/navigation";
 import { useForm, FormProvider } from "react-hook-form";
-import axios from "axios";
 import LongButton from "@/components/ui/LongButton";
 import PhaseTwo from "../../components/signup/phases/PhaseTwo";
 import { usePostUsuario } from "@/hooks/pedidos/usuarios/useGetUsuarios";
@@ -31,7 +30,7 @@ export default function SignupPage() {
       cnh: "",
       email: "",
       senha: "",
-      tipo: ""
+      tipo: "",
     },
   });
 
@@ -77,6 +76,9 @@ export default function SignupPage() {
               onEntregador={() => setStep(3)}
               onCliente={() => setStep(4)}
               onBack={back}
+              setTipo={(tipo: "motoboy" | "cliente") =>
+                methods.setValue("tipo", tipo)
+              }
             />
           )}
 

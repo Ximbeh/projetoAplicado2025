@@ -11,18 +11,24 @@ import { PedidoStatus } from "@/types/pedidos";
 
 const ITEMS_PER_PAGE = 3;
 
-export default function PedidoAndamento() {
+export default function PedidosAtivos() {
   const { data: pedidos, isLoading, isError, error } = useGetPedidos();
 
   const pedidosList = pedidos ?? [];
 
+  const usuarioLogado =
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("usuarioLogado") || "null")
+      : null;
+
+  const idUsuario = Number(usuarioLogado?.id);
+
   const pedidosFiltrados = pedidosList.filter((pedido) => {
-    const pertenceAoUsuario = pedido.id_usuario === 1;
-    const statusFilter = pedido.status !== PedidoStatus.Concluido;
+    const pedidoUsuario = pedido.id_entregador == idUsuario;
+    const pedidoNaoTerminado = pedido.status !== PedidoStatus.Concluido;
 
-    return pertenceAoUsuario && statusFilter;
+    return pedidoUsuario && pedidoNaoTerminado;
   });
-
   const [page, setPage] = useState(1);
 
   const totalPages = Math.ceil(pedidosFiltrados.length / ITEMS_PER_PAGE);
@@ -55,7 +61,7 @@ export default function PedidoAndamento() {
           alignItems="center"
           width="100%"
         >
-          <Title string={"Pedido em andamento"} />
+          <Title string={"Novos pedidos"} />
 
           {isLoading && <CircularProgress />}
 
@@ -67,7 +73,7 @@ export default function PedidoAndamento() {
           )}
 
           {!isLoading && pedidosFiltrados.length === 0 && (
-            <Typography>Nenhum pedido em andamento.</Typography>
+            <Typography>Nenhum pedido ativo.</Typography>
           )}
 
           {pedidosAtuais.length > 0 && (

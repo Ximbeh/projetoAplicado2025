@@ -3,20 +3,32 @@
 import HeaderIcon from "@/components/HeaderIcon";
 import LongInput from "@/components/ui/LongInput";
 import Title from "@/components/ui/Title";
-import { Button, Container, Stack, Typography } from "@mui/material";
+import { Button, Container, Stack } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { FormProvider, useForm } from "react-hook-form";
 
 export default function UserAdminPage() {
   const router = useRouter();
+
+  const methods = useForm({
+    defaultValues: {
+      nome: "João Silva",
+      cpf: "123.456.789-00",
+      telefone: "(11) 91234-5678",
+      email: "joao@email.com",
+    },
+  });
+
   const handleClickEditar = () => {
     router.push("admin/editar");
   };
+
   const onBack = () => {
     router.back();
   };
 
   return (
-    <>
+    <FormProvider {...methods}>
       <HeaderIcon />
       <Container
         maxWidth="sm"
@@ -30,11 +42,13 @@ export default function UserAdminPage() {
         }}
       >
         <Stack spacing={2} justifyContent="center" alignItems="center">
-          <Title string={"Novo Pedido"} />
+          <Title string={"Detalhes do Usuário"} />
+
           <LongInput label="Nome" name="nome" type="text" disabled />
           <LongInput label="CPF" name="cpf" type="text" disabled />
           <LongInput label="Telefone" name="telefone" type="tel" disabled />
           <LongInput label="Email" name="email" type="email" disabled />
+
           <Stack
             direction="row"
             spacing={2}
@@ -63,6 +77,6 @@ export default function UserAdminPage() {
           </Stack>
         </Stack>
       </Container>
-    </>
+    </FormProvider>
   );
 }

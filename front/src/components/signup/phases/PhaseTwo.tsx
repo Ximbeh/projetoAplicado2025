@@ -11,26 +11,37 @@ interface PhaseTwoProps {
   onEntregador: () => void;
   onCliente: () => void;
   onBack: () => void;
+  setTipo: (tipo: "motoboy" | "cliente") => void;
 }
 
 export default function PhaseTwo({
   onEntregador,
   onCliente,
   onBack,
+  setTipo,
 }: PhaseTwoProps) {
+  const handleEntregadorClick = () => {
+    setTipo("motoboy");
+    onEntregador();
+  };
+
+  const handleClienteClick = () => {
+    setTipo("cliente");
+    onCliente();
+  };
   return (
     <Stack spacing={2} alignItems="center" width="100%">
       <Box display="flex" flexDirection="row" gap={2}>
         <ButtonIcon
           label="Entregador"
           icon={<SportsMotorsportsIcon fontSize="large" />}
-          onClick={onEntregador}
+          onClick={handleEntregadorClick}
         />
 
         <ButtonIcon
           label="Cliente"
           icon={<PersonAddIcon fontSize="large" />}
-          onClick={onCliente}
+          onClick={handleClienteClick}
         />
       </Box>
 

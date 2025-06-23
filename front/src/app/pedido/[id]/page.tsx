@@ -15,11 +15,14 @@ import {
   Box,
 } from "@mui/material";
 import { useGetPedidos } from "@/hooks/pedidos/useGetPedidos";
+import DialogMudarStatus from "@/components/pedidos/DialogMudarStatus";
+import { useState } from "react";
 
 export default function PedidoPage() {
   const router = useRouter();
   const params = useParams();
   const pedidoId = params?.id;
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const { data: pedidos, isLoading, isError, error } = useGetPedidos();
   const usuario =
@@ -79,6 +82,9 @@ export default function PedidoPage() {
     // lógica de excluir pedido
   };
 
+  const handleChangeStatus = () => setDialogOpen(true);
+  const handleCloseDialog = () => setDialogOpen(false);
+
   const onBack = () => {
     router.back();
   };
@@ -116,18 +122,14 @@ export default function PedidoPage() {
             />
             <InfoDoubleText title={"Status:"} info={pedido.status} />
             <InfoDoubleText
-              title="Preço final estimado:"
-              info={
-                pedido.preco_final != null
-                  ? `R$${pedido.preco_final}`
-                  : "Preço não calculado"
-              }
+              title={"Preço final estimado:"}
+              info={"R$29,00"}
               bigInfo={true}
               extra={<InfoIconWithModal />}
             />
           </Box>
 
-          {usuario?.tipo === "cliente" && (
+          {usuario?.category === "cliente" && (
             <>
               <DualButton
                 onNext={handleRepetir}
@@ -140,24 +142,40 @@ export default function PedidoPage() {
             </>
           )}
 
-          {usuario?.tipo === "motoboy" && (
+          {usuario?.category === "motoboy" && (
             <>
               {pedido.status === PedidoStatus.Concluido ? (
                 <LongButton label="Voltar" onClick={onBack} />
               ) : (
                 <>
-                  <DualButton
-                    onNext={handleAceitar}
-                    onBack={onBack}
-                    nextLabel={"Aceitar"}
-                  />
-                  <LongButton label="Recusar" onClick={handleRecusar} />
+                  {pedido.id_entregador !== undefined ? (
+                    <>
+                      <LongButton
+                        label="Voltar"
+                        onClick={onBack}
+                        color={"secondary"}
+                      />
+                      <LongButton
+                        label="Mudar Status"
+                        onClick={handleChangeStatus}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <DualButton
+                        onNext={handleAceitar}
+                        onBack={onBack}
+                        nextLabel={"Aceitar"}
+                      />
+                      <LongButton label="Recusar" onClick={handleRecusar} />
+                    </>
+                  )}
                 </>
               )}
             </>
           )}
 
-          {usuario?.tipo === "admin" && (
+          {usuario?.category === "admin" && (
             <>
               <DualButton
                 onNext={handleExcluir}
@@ -168,6 +186,11 @@ export default function PedidoPage() {
           )}
         </Stack>
       </Container>
+      <DialogMudarStatus
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        pedidoId={pedidoId as string}
+      />
     </>
   );
 }

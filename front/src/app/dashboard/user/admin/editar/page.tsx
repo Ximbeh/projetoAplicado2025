@@ -4,19 +4,34 @@ import HeaderIcon from "@/components/HeaderIcon";
 import LongInput from "@/components/ui/LongInput";
 import Title from "@/components/ui/Title";
 
-import { Button, Container, Stack, Typography } from "@mui/material";
+import { Button, Container, Stack } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { FormProvider, useForm } from "react-hook-form";
 
 export default function UserAdminPageEdit() {
   const router = useRouter();
+
+  const methods = useForm({
+    defaultValues: {
+      nome: "",
+      cpf: "",
+      telefone: "",
+      email: "",
+    },
+  });
+
   const handleEditar = () => {
-    console.log("editou");
+    const data = methods.getValues();
+    console.log("Dados editados:", data);
+    // Aqui você pode fazer a requisição para editar o usuário
   };
+
   const onBack = () => {
     router.back();
   };
+
   return (
-    <>
+    <FormProvider {...methods}>
       <HeaderIcon />
       <Container
         maxWidth="sm"
@@ -30,11 +45,13 @@ export default function UserAdminPageEdit() {
         }}
       >
         <Stack spacing={2} justifyContent="center" alignItems="center">
-          <Title string={"Novo Pedido"} />
-          <LongInput label="Nome" type="name" />
-          <LongInput label="CPF" type="cpf" />
-          <LongInput label="Telefone" type="telefone" />
-          <LongInput label="Email" type="email" />
+          <Title string={"Editar Usuário"} />
+
+          <LongInput label="Nome" type="text" name="nome" />
+          <LongInput label="CPF" type="text" name="cpf" />
+          <LongInput label="Telefone" type="tel" name="telefone" />
+          <LongInput label="Email" type="email" name="email" />
+
           <Stack
             direction="row"
             spacing={2}
@@ -63,6 +80,6 @@ export default function UserAdminPageEdit() {
           </Stack>
         </Stack>
       </Container>
-    </>
+    </FormProvider>
   );
 }
