@@ -2,83 +2,44 @@ const pool = require('../config/db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// Login para usuário comum (cliente/admin)
-exports.loginUsuario = async (req, res, next) => {
+exports.login = async (req, res, next) => {
   try {
     const { email, senha } = req.body;
 
-    const [[usuario]] = await pool.query(
-      'SELECT * FROM Usuarios WHERE email = ? AND tipo IN (?, ?)',
-      [email, 'cliente', 'admin']
-    );
-
-    if (!usuario) {
-      return res.status(404).json({ success: false, message: 'Usuário não encontrado' });
+    if (!email || !senha) {
+      return res.status(400).json({ success: false, message: 'Email e senha são obrigatórios' });
     }
 
-    const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
+    const [usuarios] = await pool.query('SELECT * FROM Usuarios WHERE email = ?', [email]);
+
+    if (usuarios.length === 0) {
+      return res.status(401).json({ success: false, message: 'Usuário não encontrado' });
+    }
+
+    const usuario = usuarios[0];
+    const senhaCorreta = await bcrypt.compare(senha, usuario.senha_hash);
+
     if (!senhaCorreta) {
       return res.status(401).json({ success: false, message: 'Senha incorreta' });
     }
 
-    const payload = {
-      id: usuario.id_usuario,
-      nome: usuario.nome,
-      cpf: usuario.cpf,
-      telefone: usuario.telefone,
-      email: usuario.email,
-      entregador: false,
-      tipo: usuario.tipo
-    };
-
-    const token = jwt.sign(payload, process.env.JWT_SECRET || 'segredo123', {
-      expiresIn: '2h'
-    });
-
-    res.json({ success: true, token, usuario: payload });
-  } catch (err) {
-    next(err);
-  }
-};
-
-// Login para motoboy
-exports.loginMotoboy = async (req, res, next) => {
-  try {
-    const { email, senha } = req.body;
-
-    const [[motoboy]] = await pool.query(
-      'SELECT * FROM Usuarios WHERE email = ? AND tipo = ?',
-      [email, 'motoboy']
+    const token = jwt.sign(
+      { id: usuario.id_usuario, tipo: usuario.tipo },
+      process.env.JWT_SECRET,
+      { expiresIn: '8h' }
     );
 
-    if (!motoboy) {
-      return res.status(404).json({ success: false, message: 'Motoboy não encontrado' });
-    }
-
-    const senhaCorreta = await bcrypt.compare(senha, motoboy.senha);
-    if (!senhaCorreta) {
-      return res.status(401).json({ success: false, message: 'Senha incorreta' });
-    }
-
-    const payload = {
-      id: motoboy.id_usuario,
-      nome: motoboy.nome,
-      cpf: motoboy.cpf,
-      telefone: motoboy.telefone,
-      email: motoboy.email,
-      tipoVeiculo: motoboy.tipo_veiculo,
-      placa: motoboy.placa_moto,
-      chassi: motoboy.chassi,
-      cnh: motoboy.cnh,
-      entregador: true,
-      tipo: motoboy.tipo
-    };
-
-    const token = jwt.sign(payload, process.env.JWT_SECRET || 'segredo123', {
-      expiresIn: '2h'
+    res.json({
+      success: true,
+      message: 'Login realizado com sucesso',
+      token,
+      usuario: {
+        id: usuario.id_usuario,
+        nome: usuario.nome,
+        email: usuario.email,
+        tipo: usuario.tipo
+      }
     });
-
-    res.json({ success: true, token, usuario: payload });
   } catch (err) {
     next(err);
   }

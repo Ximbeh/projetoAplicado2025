@@ -6,16 +6,19 @@ const auth = require('../middlewares/authMiddleware');
 // Criar novo pedido
 router.post('/pedidos', auth, pedidoController.criarPedido);
 
-// Listar todos os pedidos
+// Listar todos os pedidos disponíveis (excluindo recusados pelo motoboy)
 router.get('/pedidos', auth, pedidoController.listarPedidos);
 
-// Atualizar status de pedido e registrar no histórico
-router.put('/pedidos/status', auth, pedidoController.atualizarStatus);
+// Aceitar pedido
+router.post('/pedidos/aceitar', auth, pedidoController.aceitarPedido);
+
+// Recusar pedido
+router.post('/pedidos/recusar', auth, pedidoController.recusarPedido);
+
+// Concluir pedido (com imagem base64)
+router.put('/pedidos/concluir', auth, pedidoController.concluirPedido);
 
 // Consultar histórico de um pedido específico
 router.get('/pedidos/:id_pedido/historico', auth, pedidoController.historicoPedido);
-
-// Concluir pedido com comprovante (imagem base64)
-router.put('/pedidos/concluir', auth, pedidoController.concluirPedido);
 
 module.exports = router;

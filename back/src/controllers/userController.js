@@ -51,7 +51,7 @@ exports.cadastrarUsuario = async (req, res) => {
 
     const [result] = await pool.query(
       `INSERT INTO Usuarios 
-        (nome, cpf, email, senha, telefone, tipo, cnh, placa_moto, tipo_veiculo, chassi)
+        (nome, cpf, email, senha_hash, telefone, tipo, cnh, placa_moto, tipo_veiculo, chassi)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         nome,

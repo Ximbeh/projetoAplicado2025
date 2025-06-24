@@ -3,19 +3,19 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const auth = require('../middlewares/authMiddleware');
 
-// Buscar todos os usuários (acesso público ou restrito, dependendo do projeto)
-router.get('/user', userController.getAllUsers);
+// Listar todos os usuários
+router.get('/usuarios', auth, userController.getAllUsers);
 
-// Cadastro de novo usuário (cliente ou motoboy)
+// Cadastro de novo usuário
 router.post('/signup', userController.cadastrarUsuario);
 
-// Atualizar dados de usuário
-router.put('/editarUsuario', auth, userController.editarUsuario);
+// Atualizar usuário logado
+router.put('/usuarios', auth, userController.editarUsuario); // edita baseado no token
 
-// Deletar usuário
-router.delete('/deletarUsuario', auth, userController.deletarUsuario);
+// Deletar usuário logado
+router.delete('/usuarios', auth, userController.deletarUsuario);
 
-// Alterar senha
-router.put('/usuario/alterarSenha', auth, userController.alterarSenha);
+// Alterar senha do usuário logado
+router.put('/usuarios/senha', auth, userController.alterarSenha);
 
 module.exports = router;
