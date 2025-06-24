@@ -4,8 +4,8 @@ export type Usuario = {
   cpf: string;
   telefone: string;
   email: string;
-  tipoVeiculo?: string;
-  placa?: string;
+  tipo_veiculo?: string;
+  placa_moto?: string;
   chassi?: string;
   cnh?: string;
   tipo: string;
