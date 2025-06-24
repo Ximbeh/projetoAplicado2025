@@ -15,17 +15,20 @@ exports.getAllUsers = async (req, res, next) => {
 exports.cadastrarUsuario = async (req, res) => {
   try {
     const {
-      nome,
-      cpf,
-      email,
-      senha,
-      telefone,
-      tipo,
-      cnh,
-      placa_moto,
-      tipo_veiculo,
-      chassi
-    } = req.body;
+  nome,
+  cpf,
+  email,
+  senha,
+  telefone,
+  tipo,
+  cnh,
+  placa,             // recebido do front
+  tipoVeiculo,       // recebido do front
+  chassi
+} = req.body;
+
+const placa_moto = placa;               // adapta para o nome usado no banco
+const tipo_veiculo = tipoVeiculo;
 
     // Verifica se CPF já está cadastrado
     const [cpfExistente] = await pool.query(
