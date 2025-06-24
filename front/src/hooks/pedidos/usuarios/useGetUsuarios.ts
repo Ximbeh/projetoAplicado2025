@@ -1,9 +1,15 @@
-import { useMutation } from "react-query";
-import { api } from "@/services/api"; // <- import do novo axios configurado
 import { Usuario } from "@/types/usuario";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import axios, { AxiosResponse } from "axios";
 
-export const usePostUsuario = () => {
-  return useMutation((data: Usuario) =>
-    api.post("/login/usuario", data)
-  );
-};
+async function postUsuario(data: Usuario): Promise<AxiosResponse<any>> {
+  console.log(data);
+
+  return axios.post("http://localhost:3333/api/signup", data);
+}
+
+export function usePostUsuario() {
+  return useMutation<AxiosResponse<any>, unknown, Usuario>({
+    mutationFn: postUsuario,
+  });
+}

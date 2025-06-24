@@ -15,11 +15,14 @@ import {
   Box,
 } from "@mui/material";
 import { useGetPedidos } from "@/hooks/pedidos/useGetPedidos";
+import DialogMudarStatus from "@/components/pedidos/DialogMudarStatus";
+import { useState } from "react";
 
 export default function PedidoPage() {
   const router = useRouter();
   const params = useParams();
   const pedidoId = params?.id;
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const { data: pedidos, isLoading, isError, error } = useGetPedidos();
   const usuario =
@@ -78,6 +81,9 @@ export default function PedidoPage() {
   const handleExcluir = () => {
     // lógica de excluir pedido
   };
+
+  const handleChangeStatus = () => setDialogOpen(true);
+  const handleCloseDialog = () => setDialogOpen(false);
 
   const onBack = () => {
     router.back();
@@ -142,12 +148,28 @@ export default function PedidoPage() {
                 <LongButton label="Voltar" onClick={onBack} />
               ) : (
                 <>
-                  <DualButton
-                    onNext={handleAceitar}
-                    onBack={onBack}
-                    nextLabel={"Aceitar"}
-                  />
-                  <LongButton label="Recusar" onClick={handleRecusar} />
+                  {pedido.id_entregador !== undefined ? (
+                    <>
+                      <LongButton
+                        label="Voltar"
+                        onClick={onBack}
+                        color={"secondary"}
+                      />
+                      <LongButton
+                        label="Mudar Status"
+                        onClick={handleChangeStatus}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <DualButton
+                        onNext={handleAceitar}
+                        onBack={onBack}
+                        nextLabel={"Aceitar"}
+                      />
+                      <LongButton label="Recusar" onClick={handleRecusar} />
+                    </>
+                  )}
                 </>
               )}
             </>
@@ -164,6 +186,11 @@ export default function PedidoPage() {
           )}
         </Stack>
       </Container>
+      <DialogMudarStatus
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        pedidoId={pedidoId as string}
+      />
     </>
   );
 }

@@ -3,20 +3,36 @@
 import HeaderIcon from "@/components/HeaderIcon";
 import LongInput from "@/components/ui/LongInput";
 import Title from "@/components/ui/Title";
-import { Button, Container, Stack, Typography } from "@mui/material";
+import { Button, Container, Stack } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { FormProvider, useForm } from "react-hook-form";
 
 export default function UserMotoboyPage() {
   const router = useRouter();
+
+  const methods = useForm({
+    defaultValues: {
+      nome: "João Motoboy",
+      cpf: "123.456.789-00",
+      telefone: "(11) 91234-5678",
+      email: "joao@email.com",
+      tipoVeiculo: "Moto",
+      placaVeiculo: "ABC-1234",
+      chassiVeiculo: "9BWZZZ377VT004251",
+      cnh: "12345678900",
+    },
+  });
+
   const handleClickEditar = () => {
     router.push("motoboy/editar");
   };
+
   const onBack = () => {
     router.back();
   };
 
   return (
-    <>
+    <FormProvider {...methods}>
       <HeaderIcon />
       <Container
         maxWidth="sm"
@@ -31,7 +47,8 @@ export default function UserMotoboyPage() {
         }}
       >
         <Stack spacing={2} justifyContent="center" alignItems="center">
-          <Title string={"Novo Pedido"} />
+          <Title string={"Detalhes do Motoboy"} />
+
           <LongInput label="Nome" name="nome" type="text" disabled />
           <LongInput label="CPF" name="cpf" type="text" disabled />
           <LongInput label="Telefone" name="telefone" type="tel" disabled />
@@ -55,6 +72,7 @@ export default function UserMotoboyPage() {
             disabled
           />
           <LongInput label="CNH" name="cnh" type="text" disabled />
+
           <Stack
             direction="row"
             spacing={2}
@@ -83,6 +101,6 @@ export default function UserMotoboyPage() {
           </Stack>
         </Stack>
       </Container>
-    </>
+    </FormProvider>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { Container, Stack, Typography } from "@mui/material";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useSnackbar } from "notistack";
 import Logo from "@/components/ui/Logo";
@@ -19,16 +19,17 @@ export default function LoginPage() {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
+  const methods = useForm<LoginFormData>();
+
   const {
-    register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>();
+  } = methods;
 
   const { mutate: login } = useLogin();
 
   const onSubmit = (data: LoginFormData) => {
-    login({ username: data.email, password: data.senha });
+    login({ email: data.email, senha: data.senha });
   };
 
   const handleSignupRedirect = () => {
@@ -36,70 +37,67 @@ export default function LoginPage() {
   };
 
   return (
-    <Container
-      maxWidth="sm"
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "background.default",
-      }}
-    >
-      <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
-        <Stack spacing={4} alignItems="center" width="100%">
-          <Logo />
+    <FormProvider {...methods}>
+      <Container
+        maxWidth="sm"
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "background.default",
+        }}
+      >
+        <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
+          <Stack spacing={4} alignItems="center" width="100%">
+            <Logo />
 
-          <Stack spacing={2} alignItems="center" width="100%">
-            <LongInput
-              label="E-mail"
-              type="text"
-              error={!!errors.email}
-              helperText={errors.email?.message}
-              {...register("email", { required: "E-mail é obrigatório" })}
-            />
+            <Stack spacing={2} alignItems="center" width="100%">
+              <LongInput
+                label="E-mail"
+                type="text"
+                name="email"
+                error={!!errors.email}
+                helperText={errors.email?.message}
+              />
 
-            <LongInput
-              label="Senha"
-              type="password"
-              error={!!errors.senha}
-              helperText={
-                errors.senha?.message ? (
-                  errors.senha.message
-                ) : (
-                  <Link href="recuperacao" passHref>
-                    <Typography
-                      fontSize={12}
-                      component="span"
-                      sx={{
-                        color: "primary.main",
-                        textDecoration: "none",
-                        "&:hover": {
-                          textDecoration: "underline",
-                        },
-                        cursor: "pointer",
-                      }}
-                    >
-                      Esqueceu a senha?
-                    </Typography>
-                  </Link>
-                )
-              }
-              {...register("senha", { required: "Senha é obrigatória" })}
-            />
+              <LongInput
+                label="Senha"
+                type="password"
+                name="senha"
+                error={!!errors.senha}
+                helperText={errors.senha?.message}
+              />
 
-            <LongButton label="Entrar" type="submit" />
+              {/* <Link href="/recuperacao">
+                <Typography
+                  fontSize={12}
+                  sx={{
+                    color: "primary.main",
+                    textDecoration: "none",
+                    "&:hover": {
+                      textDecoration: "underline",
+                    },
+                    alignSelf: "flex-start",
+                  }}
+                >
+                  Esqueceu a senha?
+                </Typography>
+              </Link> */}
 
-            <Typography
-              variant="body2"
-              sx={{ color: "primary.main", cursor: "pointer" }}
-              onClick={handleSignupRedirect}
-            >
-              Não tem conta? Cadastre-se!
-            </Typography>
+              <LongButton label="Entrar" type="submit" />
+
+              <Typography
+                variant="body2"
+                sx={{ color: "primary.main", cursor: "pointer" }}
+                onClick={handleSignupRedirect}
+              >
+                Não tem conta? Cadastre-se!
+              </Typography>
+            </Stack>
           </Stack>
-        </Stack>
-      </form>
-    </Container>
+        </form>
+      </Container>
+    </FormProvider>
   );
 }

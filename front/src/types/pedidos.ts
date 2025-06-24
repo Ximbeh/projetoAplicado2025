@@ -24,4 +24,5 @@ export enum PedidoStatus {
   AguardandoPagamento = "AguardandoPagamento",
   Cancelado = "Cancelado",
   Concluido = "Concluido",
+  Falhou = "Falhou",
 }

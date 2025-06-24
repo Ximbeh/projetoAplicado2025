@@ -3,20 +3,32 @@
 import HeaderIcon from "@/components/HeaderIcon";
 import LongInput from "@/components/ui/LongInput";
 import Title from "@/components/ui/Title";
-import { Button, Container, Stack, Typography } from "@mui/material";
+import { Button, Container, Stack } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { FormProvider, useForm } from "react-hook-form";
 
 export default function UserClientePage() {
   const router = useRouter();
+
+  const methods = useForm({
+    defaultValues: {
+      nome: "Maria Souza",
+      cpf: "987.654.321-00",
+      telefone: "(21) 99876-5432",
+      email: "maria@email.com",
+    },
+  });
+
   const handleClickEditar = () => {
     router.push("cliente/editar");
   };
+
   const onBack = () => {
     router.back();
   };
 
   return (
-    <>
+    <FormProvider {...methods}>
       <HeaderIcon />
       <Container
         maxWidth="sm"
@@ -30,11 +42,13 @@ export default function UserClientePage() {
         }}
       >
         <Stack spacing={2} justifyContent="center" alignItems="center">
-          <Title string={"Novo Pedido"} />
+          <Title string={"Detalhes do Cliente"} />
+
           <LongInput label="Nome" name="nome" type="text" disabled />
           <LongInput label="CPF" name="cpf" type="text" disabled />
           <LongInput label="Telefone" name="telefone" type="tel" disabled />
           <LongInput label="Email" name="email" type="email" disabled />
+
           <Stack
             direction="row"
             spacing={2}
@@ -63,6 +77,6 @@ export default function UserClientePage() {
           </Stack>
         </Stack>
       </Container>
-    </>
+    </FormProvider>
   );
 }

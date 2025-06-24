@@ -11,7 +11,7 @@ import { PedidoStatus } from "@/types/pedidos";
 
 const ITEMS_PER_PAGE = 3;
 
-export default function NovosPedidos() {
+export default function PedidosAtivos() {
   const { data: pedidos, isLoading, isError, error } = useGetPedidos();
 
   const pedidosList = pedidos ?? [];
@@ -24,13 +24,10 @@ export default function NovosPedidos() {
   const idUsuario = Number(usuarioLogado?.id);
 
   const pedidosFiltrados = pedidosList.filter((pedido) => {
-    const pedidoLivre = pedido.id_entregador === null;
+    const pedidoUsuario = pedido.id_entregador == idUsuario;
+    const pedidoNaoTerminado = pedido.status !== PedidoStatus.Concluido;
 
-    const usuarioNaoRecusou =
-      !Array.isArray(pedido.id_entregadoresRecusado) ||
-      !pedido.id_entregadoresRecusado.includes(idUsuario);
-
-    return pedidoLivre && usuarioNaoRecusou;
+    return pedidoUsuario && pedidoNaoTerminado;
   });
   const [page, setPage] = useState(1);
 
