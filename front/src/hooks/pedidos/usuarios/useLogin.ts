@@ -4,13 +4,13 @@ import { useSnackbar } from "notistack";
 
 type LoginData = {
   username: string;
-  passowrd: string;
+  password: string;
 };
 
 async function postLogin(data: LoginData) {
   console.log(data);
 
-  const res = await fetch("http://localhost:3333/api/login/usuario", {
+  const res = await fetch("http://localhost:3333/api/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),

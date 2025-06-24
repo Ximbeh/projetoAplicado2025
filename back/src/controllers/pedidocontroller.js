@@ -31,9 +31,13 @@ exports.criarPedido = async (req, res) => {
       return res.status(400).json({ erro: 'Campos obrigatórios ausentes.' });
     }
 
-    const origemCoords = await buscarCoordenadas(cep_origem, logradouro_origem, numero_origem);
-    const destinoCoords = await buscarCoordenadas(cep_destino, logradouro_destino, numero_destino);
+   console.log(" Origem:", { cep_origem, logradouro_origem, numero_origem });
+const origemCoords = await buscarCoordenadas(cep_origem, logradouro_origem, numero_origem);
+console.log(" Coordenadas origem:", origemCoords);
 
+console.log(" Destino:", { cep_destino, logradouro_destino, numero_destino });
+const destinoCoords = await buscarCoordenadas(cep_destino, logradouro_destino, numero_destino);
+console.log(" Coordenadas destino:", destinoCoords);
     if (!origemCoords || !destinoCoords) {
       return res.status(400).json({ erro: 'Não foi possível localizar os endereços.' });
     }

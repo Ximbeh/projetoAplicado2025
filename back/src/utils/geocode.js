@@ -1,9 +1,11 @@
+const axios = require('axios');
+
 async function buscarCoordenadas(cep, logradouro, numero) {
   try {
     const endereco = `${logradouro}, ${numero}, ${cep}, Brasil`;
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}`;
 
-    console.log('Consultando geocodificação para:', endereco);
+    console.log('Endereço consultado:', endereco);
 
     const response = await axios.get(url, {
       headers: { 'User-Agent': 'projetoAplicado2025' }
@@ -27,3 +29,5 @@ async function buscarCoordenadas(cep, logradouro, numero) {
     return null;
   }
 }
+
+module.exports = { buscarCoordenadas };
