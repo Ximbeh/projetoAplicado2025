@@ -12,8 +12,8 @@ interface PhaseThreeProps {
 export default function PhaseThree({ onNext, onBack }: PhaseThreeProps) {
   return (
     <Stack spacing={2} alignItems="center" width="100%">
-      <LongInput label="Tipo de veículo" type="text" name="tipoVeiculo" />
-      <LongInput label="Placa do veículo" type="text" name="placa" />
+      <LongInput label="Tipo de veículo" type="text" name="tipo_veiculo" />
+      <LongInput label="Placa do veículo" type="text" name="placa_moto" />
       <LongInput label="Chassi do veículo" type="text" name="chassi" />
       <LongInput label="CNH" type="text" name="cnh" />
       <DualButton onNext={onNext} onBack={onBack} />

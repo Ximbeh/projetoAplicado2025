@@ -24,8 +24,8 @@ export default function SignupPage() {
       nome: "",
       cpf: "",
       telefone: "",
-      tipoVeiculo: "",
-      placa: "",
+      tipo_veiculo: "",
+      placa_moto: "",
       chassi: "",
       cnh: "",
       email: "",
@@ -91,7 +91,7 @@ export default function SignupPage() {
               <Typography variant="h6">
                 Cadastro realizado com sucesso!
               </Typography>
-              <LongButton label={"Finalizar"} />
+              <LongButton onClick={goToLogin} label={"Finalizar"} />
             </Stack>
           )}
         </Stack>

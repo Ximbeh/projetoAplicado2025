@@ -16,8 +16,8 @@ export default function UserMotoboyPage() {
       cpf: "123.456.789-00",
       telefone: "(11) 91234-5678",
       email: "joao@email.com",
-      tipoVeiculo: "Moto",
-      placaVeiculo: "ABC-1234",
+      tipo_veiculo: "Moto",
+      placa_moto: "ABC-1234",
       chassiVeiculo: "9BWZZZ377VT004251",
       cnh: "12345678900",
     },
@@ -55,13 +55,13 @@ export default function UserMotoboyPage() {
           <LongInput label="Email" name="email" type="email" disabled />
           <LongInput
             label="Tipo do veículo"
-            name="tipoVeiculo"
+            name="tipo_veiculo"
             type="text"
             disabled
           />
           <LongInput
             label="Placa do veículo"
-            name="placaVeiculo"
+            name="placa_moto"
             type="text"
             disabled
           />
