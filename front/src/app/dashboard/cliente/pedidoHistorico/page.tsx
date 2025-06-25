@@ -23,8 +23,6 @@ export default function PedidoAndamento() {
     return pertenceAoUsuario && statusFilter;
   });
 
-  console.log(pedidosList);
-
   const [page, setPage] = useState(1);
 
   const totalPages = Math.ceil(pedidosFiltrados.length / ITEMS_PER_PAGE);

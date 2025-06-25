@@ -8,16 +8,18 @@ import PhaseOneNovoPedido from "@/components/novoPedido/phaseOne";
 import PhaseThreeNovoPedido from "@/components/novoPedido/phaseThree";
 import PhaseTwoNovoPedido from "@/components/novoPedido/phaseTwo";
 import Title from "@/components/ui/Title";
+import { useCalculatePrice } from "@/hooks/pedidos/useCalculatePrice";
 import { Container, Stack } from "@mui/material";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { enqueueSnackbar } from "notistack";
 import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 
 export default function NovoPedido() {
   const [step, setStep] = useState(1);
-  const [loadingError, setLoadingError] = useState(false);
   const router = useRouter();
+  const { mutate, isError: isErrorCalculatePrice } = useCalculatePrice();
 
   const methods = useForm({
     defaultValues: {
@@ -31,6 +33,7 @@ export default function NovoPedido() {
       logradouroDestino: "",
       numeroDestino: "",
       complementoDestino: "",
+      preco: "",
     },
   });
 
@@ -61,21 +64,40 @@ export default function NovoPedido() {
       setStep((prev) => Math.min(prev + 1, 5));
     }
   };
-
+  const goBack = () => {
+    router.back();
+  };
   const onBack = () => setStep((prev) => Math.max(prev - 1, 1));
+  const calculatePrice = () => {
+    const data = methods.getValues();
 
-  const calculatePrice = async () => {
-    try {
-      setLoadingError(false);
-      await Promise.all([
-        axios.get("https://jsonplaceholder.typicode.com/posts/1"),
-        axios.get("https://jsonplaceholder.typicode.com/posts/2"),
-      ]);
-      setStep(5);
-    } catch (err) {
-      console.error("Erro ao calcular:", err);
-      setLoadingError(true);
-    }
+    mutate(
+      {
+        origem: {
+          cep: data.cepOrigem,
+          logradouro: data.logradouroOrigem,
+          numero: data.numeroOrigem,
+        },
+        destino: {
+          cep: data.cepDestino,
+          logradouro: data.logradouroDestino,
+          numero: data.numeroDestino,
+        },
+        peso: data.pesoPedido,
+      },
+      {
+        onSuccess: (data) => {
+          enqueueSnackbar(`Preço calculado com sucesso: R$ ${data.preco}`, {
+            variant: "success",
+          });
+          methods.setValue("preco", data.preco);
+          setStep(5);
+        },
+        onError: () => {
+          enqueueSnackbar("Erro ao calcular o preço.", { variant: "error" });
+        },
+      }
+    );
   };
 
   const handlePhaseThreeNext = () => {
@@ -111,7 +133,7 @@ export default function NovoPedido() {
                 register={methods.register}
                 watch={methods.watch}
                 onNext={onNext}
-                onBack={onBack}
+                onBack={goBack}
               />
             )}
 
@@ -134,7 +156,7 @@ export default function NovoPedido() {
             )}
 
             {step === 4 && (
-              <LoadingPhase onRetry={goToMenu} error={loadingError} />
+              <LoadingPhase onRetry={goToMenu} error={isErrorCalculatePrice} />
             )}
 
             {step === 5 && (

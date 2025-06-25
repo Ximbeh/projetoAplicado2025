@@ -8,7 +8,7 @@ import Logo from "@/components/ui/Logo";
 import LongInput from "@/components/ui/LongInput";
 import LongButton from "@/components/ui/LongButton";
 import Link from "next/link";
-import { useLogin } from "@/hooks/pedidos/usuarios/useLogin";
+import { useLogin } from "@/hooks/usuarios/useLogin";
 
 type LoginFormData = {
   email: string;

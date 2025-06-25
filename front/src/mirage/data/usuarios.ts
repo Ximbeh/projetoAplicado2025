@@ -3,18 +3,18 @@ export const usuarios = [
     id: "1",
     username: "cliente",
     password: "1",
-    category: "cliente",
+    tipo: "cliente",
   },
   {
     id: "2",
     username: "motoboy",
     password: "1",
-    category: "motoboy",
+    tipo: "motoboy",
   },
   {
     id: "3",
     username: "admin",
     password: "1",
-    category: "admin",
+    tipo: "admin",
   },
 ];

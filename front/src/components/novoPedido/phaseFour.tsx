@@ -52,7 +52,7 @@ function ResumoPedido({ methods }: ResumoPedidoProps) {
       />
       <InfoDoubleText
         title={"Preço final estimado:"}
-        info={"R$29,00"}
+        info={values.preco}
         bigInfo={true}
         extra={<InfoIconWithModal />}
       />

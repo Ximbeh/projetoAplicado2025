@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useForm, FormProvider } from "react-hook-form";
 import LongButton from "@/components/ui/LongButton";
 import PhaseTwo from "../../components/signup/phases/PhaseTwo";
-import { usePostUsuario } from "@/hooks/pedidos/usuarios/useGetUsuarios";
+import { usePostUsuario } from "@/hooks/usuarios/useGetUsuarios";
 import { Usuario } from "@/types/usuario";
 
 export default function SignupPage() {

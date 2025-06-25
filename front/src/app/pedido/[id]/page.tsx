@@ -16,7 +16,10 @@ import {
 } from "@mui/material";
 import { useGetPedidos } from "@/hooks/pedidos/useGetPedidos";
 import DialogMudarStatus from "@/components/pedidos/DialogMudarStatus";
-import { useState } from "react";
+import { useRecusarPedido } from "@/hooks/pedidos/useRecusarPedido";
+import { Snackbar, Alert } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useAceitarPedido } from "@/hooks/pedidos/useAceitarPedido";
 
 export default function PedidoPage() {
   const router = useRouter();
@@ -24,24 +27,35 @@ export default function PedidoPage() {
   const pedidoId = params?.id;
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const { data: pedidos, isLoading, isError, error } = useGetPedidos();
+  const {
+    data: pedidos,
+    isLoading: isLoadingGetPedido,
+    isError: isErrorGetPedido,
+    error: errorGetPedido,
+  } = useGetPedidos();
+  const { mutate: mutateRecusar, isPending: isPendingRecusar } =
+    useRecusarPedido();
+
+  const { mutate: mutateAceitar, isPending: isPendingAceitar } =
+    useAceitarPedido();
+
   const usuario =
     typeof window !== "undefined"
       ? JSON.parse(localStorage.getItem("usuarioLogado") || "null")
       : null;
 
-  if (isLoading)
+  if (isLoadingGetPedido)
     return (
       <Container sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
         <CircularProgress />
       </Container>
     );
 
-  if (isError)
+  if (isErrorGetPedido)
     return (
       <Container sx={{ mt: 4 }}>
         <Typography color="error">
-          Erro ao carregar pedidos: {`${error}`}
+          Erro ao carregar pedidos: {`${errorGetPedido}`}
         </Typography>
       </Container>
     );
@@ -62,6 +76,8 @@ export default function PedidoPage() {
       </Container>
     );
 
+  console.log(pedido);
+
   const handleRepetir = () => {
     console.log("repetir");
   };
@@ -71,11 +87,13 @@ export default function PedidoPage() {
   };
 
   const handleAceitar = () => {
-    // lógica de recusar pedido
+    if (!pedidoId || !usuario?.id) return;
+    mutateAceitar({ pedidoId: pedidoId as string, idMotoboy: usuario.id });
   };
 
   const handleRecusar = () => {
-    // lógica de recusar pedido
+    if (!pedidoId || !usuario?.id) return;
+    mutateRecusar({ pedidoId: pedidoId as string, idMotoboy: usuario.id });
   };
 
   const handleExcluir = () => {
@@ -129,7 +147,7 @@ export default function PedidoPage() {
             />
           </Box>
 
-          {usuario?.category === "cliente" && (
+          {usuario?.tipo === "cliente" && (
             <>
               <DualButton
                 onNext={handleRepetir}
@@ -142,7 +160,7 @@ export default function PedidoPage() {
             </>
           )}
 
-          {usuario?.category === "motoboy" && (
+          {usuario?.tipo === "motoboy" && (
             <>
               {pedido.status === PedidoStatus.Concluido ? (
                 <LongButton label="Voltar" onClick={onBack} />
@@ -166,8 +184,15 @@ export default function PedidoPage() {
                         onNext={handleAceitar}
                         onBack={onBack}
                         nextLabel={"Aceitar"}
+                        disabledNext={isPendingRecusar}
+                        loadingNext={isPendingAceitar}
                       />
-                      <LongButton label="Recusar" onClick={handleRecusar} />
+                      <LongButton
+                        label="Recusar"
+                        onClick={handleRecusar}
+                        disabled={isPendingAceitar}
+                        loading={isPendingRecusar}
+                      />
                     </>
                   )}
                 </>
@@ -175,7 +200,7 @@ export default function PedidoPage() {
             </>
           )}
 
-          {usuario?.category === "admin" && (
+          {usuario?.tipo === "admin" && (
             <>
               <DualButton
                 onNext={handleExcluir}

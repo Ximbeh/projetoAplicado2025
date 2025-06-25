@@ -1,6 +1,8 @@
+"use client";
+
 import { Box } from "@mui/material";
-import logo from "../../assets/icon/Logo.png";
 import Image from "next/image";
+import logo from "../../assets/icon/Logo.png";
 
 export default function Logo() {
   return (
@@ -9,6 +11,7 @@ export default function Logo() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        cursor: "pointer",
       }}
     >
       <Image src={logo} alt="Logo" />
