@@ -91,7 +91,7 @@ export default function SignupPage() {
               <Typography variant="h6">
                 Cadastro realizado com sucesso!
               </Typography>
-              <LongButton label={"Finalizar"} />
+              <LongButton onClick={goToLogin} label={"Finalizar"} />
             </Stack>
           )}
         </Stack>
