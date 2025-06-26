@@ -25,7 +25,7 @@ export default function HistoricoPedidos() {
 
   const pedidosFiltrados = pedidosList.filter((pedido) => {
     const pedidoUsuario = pedido.id_entregador == idUsuario;
-    const pedidoTerminado = pedido.status === PedidoStatus.Concluido;
+    const pedidoTerminado = pedido.status === PedidoStatus.Entregue;
     return pedidoUsuario && pedidoTerminado;
   });
 
@@ -80,7 +80,7 @@ export default function HistoricoPedidos() {
             <PedidoList
               pedidos={pedidosAtuais}
               statusRemover={true}
-              statusFiltrar={PedidoStatus.Concluido}
+              statusFiltrar={PedidoStatus.Entregue}
             />
           )}
 

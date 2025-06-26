@@ -14,7 +14,7 @@ interface Props {
 export default function PhaseFiveNovoPedido({ onNext, onBack, onMenu }: Props) {
   return (
     <>
-      <MegaTitle string={"Concluido"} />
+      <MegaTitle string={"Entregue"} />
       <Stack paddingX={4}>
         <InfoDoubleText
           title={"Seu pedido foi enviado!"}

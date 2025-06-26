@@ -83,7 +83,7 @@ export default function NovosPedidos() {
             <PedidoList
               pedidos={pedidosAtuais}
               statusRemover={true}
-              statusFiltrar={PedidoStatus.Concluido}
+              statusFiltrar={PedidoStatus.Entregue}
             />
           )}
 

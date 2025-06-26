@@ -1,8 +1,7 @@
 export interface Pedido {
-  id: number;
-  id_usuario: number;
-  id_entregador?: number;
-  id_entregadoresRecusado: number[];
+  id_pedido: number;
+  cliente_id: number;
+  motoboy_id?: number;
   conteudo: string;
   peso: number;
   cep_origem: number;
@@ -16,14 +15,16 @@ export interface Pedido {
   preco_final: number;
   status: PedidoStatus;
   data_criacao: string;
+  distancia_km: string;
+  preco: string;
+  tempo_estimado: number;
 }
 
 export enum PedidoStatus {
-  Pendente = "Pendente",
+  Criado = "Criado",
   Aceito = "Aceito",
-  EmTransporte = "EmTransporte",
-  AguardandoPagamento = "AguardandoPagamento",
+  EmTransito = "EmTransito",
   Cancelado = "Cancelado",
-  Concluido = "Concluido",
+  Entregue = "Entregue",
   Falhou = "Falhou",
 }

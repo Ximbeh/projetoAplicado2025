@@ -11,6 +11,7 @@ interface Props {
   onBack: () => void;
   onCancel: () => void;
   methods: UseFormReturn<any>;
+  onNextLoading?: boolean;
 }
 
 export default function PhaseFourNovoPedido({
@@ -18,12 +19,18 @@ export default function PhaseFourNovoPedido({
   onBack,
   onCancel,
   methods,
+  onNextLoading,
 }: Props) {
   return (
     <>
       <MegaTitle string={"Origem"} />
       <ResumoPedido methods={methods} />
-      <DualButton onNext={onNext} onBack={onBack} nextLabel="Concluir" />
+      <DualButton
+        onNext={onNext}
+        onBack={onBack}
+        nextLabel="Concluir"
+        loadingNext={onNextLoading}
+      />
       <LongButton label="Cancelar" onClick={onCancel} />
     </>
   );
@@ -52,7 +59,7 @@ function ResumoPedido({ methods }: ResumoPedidoProps) {
       />
       <InfoDoubleText
         title={"Preço final estimado:"}
-        info={values.preco}
+        info={`R$${values.preco}`}
         bigInfo={true}
         extra={<InfoIconWithModal />}
       />

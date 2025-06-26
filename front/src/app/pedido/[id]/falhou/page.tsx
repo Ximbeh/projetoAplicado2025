@@ -44,7 +44,7 @@ export default function FalhouPedido() {
     const formData = new FormData();
     formData.append("imagem", imagem);
     formData.append("observacao", observacao);
-    formData.append("status", PedidoStatus.Concluido);
+    formData.append("status", PedidoStatus.Entregue);
 
     try {
       const response = await fetch("/api/pedidos/concluirPedido", {

@@ -17,7 +17,7 @@ export const pedidos: Pedido[] = [
     numero_destino: "456",
     complemento_destino: "Sala 12",
     preco_final: 19.5,
-    status: PedidoStatus.Pendente,
+    status: PedidoStatus.Criado,
     data_criacao: "2024-06-01T10:00:00",
   },
   {
@@ -36,7 +36,7 @@ export const pedidos: Pedido[] = [
     numero_destino: "321",
     complemento_destino: "Bloco B",
     preco_final: 27.0,
-    status: PedidoStatus.EmTransporte,
+    status: PedidoStatus.EmTransito,
     data_criacao: "2024-06-02T14:30:00",
   },
   {
@@ -55,7 +55,7 @@ export const pedidos: Pedido[] = [
     numero_destino: "1000",
     complemento_destino: "Cobertura",
     preco_final: 15.0,
-    status: PedidoStatus.AguardandoPagamento,
+    status: PedidoStatus.EmTransito,
     data_criacao: "2024-06-03T09:15:00",
   },
   {
@@ -93,7 +93,7 @@ export const pedidos: Pedido[] = [
     numero_destino: "456",
     complemento_destino: "Galpão",
     preco_final: 35.0,
-    status: PedidoStatus.Pendente,
+    status: PedidoStatus.Criado,
     data_criacao: "2024-06-05T16:20:00",
   },
 
@@ -113,7 +113,7 @@ export const pedidos: Pedido[] = [
     numero_destino: "2",
     complemento_destino: "",
     preco_final: 10.0,
-    status: PedidoStatus.Concluido,
+    status: PedidoStatus.Entregue,
     data_criacao: "2024-05-30T08:00:00",
   },
   {
@@ -132,7 +132,7 @@ export const pedidos: Pedido[] = [
     numero_destino: "4",
     complemento_destino: "",
     preco_final: 50.0,
-    status: PedidoStatus.Concluido,
+    status: PedidoStatus.Entregue,
     data_criacao: "2024-05-29T13:00:00",
   },
   {
@@ -151,7 +151,7 @@ export const pedidos: Pedido[] = [
     numero_destino: "6",
     complemento_destino: "",
     preco_final: 20.0,
-    status: PedidoStatus.Concluido,
+    status: PedidoStatus.Entregue,
     data_criacao: "2024-05-28T15:00:00",
   },
   {
@@ -170,7 +170,7 @@ export const pedidos: Pedido[] = [
     numero_destino: "8",
     complemento_destino: "",
     preco_final: 15.0,
-    status: PedidoStatus.Concluido,
+    status: PedidoStatus.Entregue,
     data_criacao: "2024-05-27T17:00:00",
   },
   {
@@ -189,7 +189,7 @@ export const pedidos: Pedido[] = [
     numero_destino: "10",
     complemento_destino: "",
     preco_final: 100.0,
-    status: PedidoStatus.Concluido,
+    status: PedidoStatus.Entregue,
     data_criacao: "2024-05-26T19:00:00",
   },
   {
@@ -208,7 +208,7 @@ export const pedidos: Pedido[] = [
     numero_destino: "456",
     complemento_destino: "Sala 12",
     preco_final: 19.5,
-    status: PedidoStatus.Pendente,
+    status: PedidoStatus.Criado,
     data_criacao: "2024-06-01T10:00:00",
   },
   {
@@ -227,7 +227,7 @@ export const pedidos: Pedido[] = [
     numero_destino: "456",
     complemento_destino: "Sala 12",
     preco_final: 19.5,
-    status: PedidoStatus.Concluido,
+    status: PedidoStatus.Entregue,
     data_criacao: "2024-06-01T10:00:00",
   },
 ];

@@ -11,7 +11,7 @@ interface PedidoProps {
 export default function PedidoItem({ pedido }: PedidoProps) {
   const router = useRouter();
   const handleViewClick = () => {
-    router.push(`/pedido/${pedido.id}`);
+    router.push(`/pedido/${pedido.id_pedido}`);
   };
 
   return (

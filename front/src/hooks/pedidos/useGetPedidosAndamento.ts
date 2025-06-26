@@ -18,21 +18,16 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-async function fetchPedidos({
-  queryKey,
-}: {
-  queryKey: [string, number];
-}): Promise<Pedido[]> {
-  const [, pedidoId] = queryKey;
-  const response = await api.get(`/pedidos`);
+async function fetchPedidos(): Promise<Pedido[]> {
+  const response = await api.get("/pedidos/cliente/andamento");
   console.log(response.data);
   return response.data.data;
 }
-export function useGetPedidos(pedidoId: number) {
+
+export function useGetPedidosAndamento() {
   const { data, error, isLoading, isError, refetch } = useQuery({
-    queryKey: ["pedidos", pedidoId],
+    queryKey: ["pedidos-andamento"],
     queryFn: fetchPedidos,
-    enabled: !!pedidoId,
   });
 
   return {

@@ -32,7 +32,7 @@ export default function PedidoPage() {
     isLoading: isLoadingGetPedido,
     isError: isErrorGetPedido,
     error: errorGetPedido,
-  } = useGetPedidos();
+  } = useGetPedidos(pedidoId as unknown as number);
   const { mutate: mutateRecusar, isPending: isPendingRecusar } =
     useRecusarPedido();
 
@@ -67,7 +67,7 @@ export default function PedidoPage() {
       </Container>
     );
 
-  const pedido = pedidos?.find((p) => String(p.id) === pedidoId);
+  const pedido = pedidos?.find((p) => String(p.id_pedido) === pedidoId);
 
   if (!pedido)
     return (
@@ -154,7 +154,7 @@ export default function PedidoPage() {
                 onBack={onBack}
                 nextLabel={"Repetir"}
               />
-              {pedido.status === PedidoStatus.Concluido && (
+              {pedido.status === PedidoStatus.Entregue && (
                 <LongButton label="Cancelar" onClick={handleCancelar} />
               )}
             </>
@@ -162,11 +162,11 @@ export default function PedidoPage() {
 
           {usuario?.tipo === "motoboy" && (
             <>
-              {pedido.status === PedidoStatus.Concluido ? (
+              {pedido.status === PedidoStatus.Entregue ? (
                 <LongButton label="Voltar" onClick={onBack} />
               ) : (
                 <>
-                  {pedido.id_entregador !== undefined ? (
+                  {pedido.motoboy_id !== undefined ? (
                     <>
                       <LongButton
                         label="Voltar"

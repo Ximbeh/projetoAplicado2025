@@ -32,7 +32,7 @@ export function useAceitarPedido() {
       return response.data.data;
     },
     onSuccess: () => {
-      enqueueSnackbar("Pedido aceito com sucesso!", { variant: "success" });
+      enqueueSnackbar("Pedido Aceito com sucesso!", { variant: "success" });
       router.push("/dashboard/motoby");
     },
     onError: (error) => {

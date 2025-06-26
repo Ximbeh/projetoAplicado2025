@@ -63,7 +63,7 @@ export default function DialogMudarStatus({ open, onClose, pedidoId }: Props) {
   const handleConfirmar = () => {
     if (novoStatus === PedidoStatus.Falhou) {
       router.push(`/pedido/${pedidoId}/falhou`);
-    } else if (novoStatus === PedidoStatus.Concluido) {
+    } else if (novoStatus === PedidoStatus.Entregue) {
       router.push(`/pedido/${pedidoId}/concluir`);
     } else {
       mutation.mutate();

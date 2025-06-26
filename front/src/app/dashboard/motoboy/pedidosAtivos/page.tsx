@@ -25,7 +25,7 @@ export default function PedidosAtivos() {
 
   const pedidosFiltrados = pedidosList.filter((pedido) => {
     const pedidoUsuario = pedido.id_entregador == idUsuario;
-    const pedidoNaoTerminado = pedido.status !== PedidoStatus.Concluido;
+    const pedidoNaoTerminado = pedido.status !== PedidoStatus.Entregue;
 
     return pedidoUsuario && pedidoNaoTerminado;
   });
@@ -80,7 +80,7 @@ export default function PedidosAtivos() {
             <PedidoList
               pedidos={pedidosAtuais}
               statusRemover={true}
-              statusFiltrar={PedidoStatus.Concluido}
+              statusFiltrar={PedidoStatus.Entregue}
             />
           )}
 

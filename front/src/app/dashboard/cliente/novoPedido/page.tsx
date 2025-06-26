@@ -9,6 +9,7 @@ import PhaseThreeNovoPedido from "@/components/novoPedido/phaseThree";
 import PhaseTwoNovoPedido from "@/components/novoPedido/phaseTwo";
 import Title from "@/components/ui/Title";
 import { useCalculatePrice } from "@/hooks/pedidos/useCalculatePrice";
+import { useCreatePedido } from "@/hooks/pedidos/useCreatePedido";
 import { Container, Stack } from "@mui/material";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -20,6 +21,8 @@ export default function NovoPedido() {
   const [step, setStep] = useState(1);
   const router = useRouter();
   const { mutate, isError: isErrorCalculatePrice } = useCalculatePrice();
+  const { mutate: createPedido, isPending: isLoadingCreatePedido } =
+    useCreatePedido();
 
   const methods = useForm({
     defaultValues: {
@@ -47,6 +50,13 @@ export default function NovoPedido() {
     console.log("acompanhar");
   };
 
+  const usuarioLogado =
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("usuarioLogado") || "null")
+      : null;
+
+  const idUsuario = usuarioLogado?.id;
+
   const onNext = async () => {
     if (step === 5) {
       const isValid = await methods.trigger();
@@ -54,34 +64,27 @@ export default function NovoPedido() {
 
       const data = methods.getValues();
 
-      try {
-        const token = localStorage.getItem("token");
-
-await axios.post(
-  "http://localhost:3333/api/pedidos",
-  {
-    id_usuario: 33, // ou recupere dinamicamente do token se preferir
-    conteudo: data.conteudo,
-    peso: parseFloat(data.pesoPedido),
-    cep_origem: data.cepOrigem,
-    logradouro_origem: data.logradouroOrigem,
-    numero_origem: data.numeroOrigem,
-    complemento_origem: data.complementoOrigem,
-    cep_destino: data.cepDestino,
-    logradouro_destino: data.logradouroDestino,
-    numero_destino: data.numeroDestino,
-    complemento_destino: data.complementoDestino
-  },
-  {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }
-);
-        setStep(6); // Sucesso
-      } catch (error) {
-        console.error("Erro ao cadastrar:", error);
-      }
+      createPedido(
+        {
+          id_usuario: idUsuario,
+          conteudo: data.conteudo,
+          peso: parseFloat(data.pesoPedido),
+          cep_origem: data.cepOrigem,
+          logradouro_origem: data.logradouroOrigem,
+          numero_origem: data.numeroOrigem,
+          complemento_origem: data.complementoOrigem,
+          cep_destino: data.cepDestino,
+          logradouro_destino: data.logradouroDestino,
+          numero_destino: data.numeroDestino,
+          complemento_destino: data.complementoDestino,
+          preco: Number(data.preco),
+        },
+        {
+          onSuccess: () => {
+            setStep(6);
+          },
+        }
+      );
     } else {
       setStep((prev) => Math.min(prev + 1, 5));
     }
@@ -109,9 +112,12 @@ await axios.post(
       },
       {
         onSuccess: (data) => {
-          enqueueSnackbar(`Preço calculado com sucesso: R$ ${data.preco_estimado}`, {
-            variant: "success",
-          });
+          enqueueSnackbar(
+            `Preço calculado com sucesso: R$ ${data.preco_estimado}`,
+            {
+              variant: "success",
+            }
+          );
           methods.setValue("preco", data.preco_estimado);
           setStep(5);
         },
@@ -187,6 +193,7 @@ await axios.post(
                 onBack={onBack}
                 onCancel={goToMenu}
                 methods={methods}
+                onNextLoading={isLoadingCreatePedido}
               />
             )}
 

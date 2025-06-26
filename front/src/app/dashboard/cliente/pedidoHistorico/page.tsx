@@ -18,7 +18,7 @@ export default function PedidoAndamento() {
 
   const pedidosFiltrados = pedidosList.filter((pedido) => {
     const pertenceAoUsuario = pedido.id_usuario === 1;
-    const statusFilter = pedido.status === PedidoStatus.Concluido;
+    const statusFilter = pedido.status === PedidoStatus.Entregue;
 
     return pertenceAoUsuario && statusFilter;
   });
@@ -74,7 +74,7 @@ export default function PedidoAndamento() {
             <PedidoList
               pedidos={pedidosAtuais}
               statusRemover={false}
-              statusFiltrar={PedidoStatus.Concluido}
+              statusFiltrar={PedidoStatus.Entregue}
             />
           )}
 

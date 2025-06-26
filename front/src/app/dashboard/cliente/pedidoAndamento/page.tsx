@@ -3,15 +3,15 @@
 import { useState } from "react";
 import HeaderIcon from "@/components/HeaderIcon";
 import Title from "@/components/ui/Title";
-import { useGetPedidos } from "@/hooks/pedidos/useGetPedidos";
 import { Container, Stack, Typography, CircularProgress } from "@mui/material";
 import PedidoList from "@/components/pedidos/PedidoList";
 import PaginationControls from "@/components/PaginationControlls";
+import { useGetPedidosAndamento } from "@/hooks/pedidos/useGetPedidosAndamento";
 
 const ITEMS_PER_PAGE = 3;
 
 export default function PedidoAndamento() {
-  const { data: pedidos, isLoading, isError, error } = useGetPedidos();
+  const { data: pedidos, isLoading, isError, error } = useGetPedidosAndamento();
 
   const pedidosList = pedidos ?? [];
 
@@ -25,6 +25,8 @@ export default function PedidoAndamento() {
 
   const handlePrevPage = () => setPage((p) => Math.max(p - 1, 1));
   const handleNextPage = () => setPage((p) => Math.min(p + 1, totalPages));
+
+  console.log(pedidos);
 
   return (
     <>
@@ -62,10 +64,7 @@ export default function PedidoAndamento() {
           )}
 
           {pedidosAtuais.length > 0 && (
-            <PedidoList
-              pedidos={pedidosAtuais}
-              statusRemover={true}
-            />
+            <PedidoList pedidos={pedidosAtuais} statusRemover={true} />
           )}
 
           <PaginationControls
