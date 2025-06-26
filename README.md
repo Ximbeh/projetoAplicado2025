@@ -120,7 +120,7 @@ Este diagrama ilustra as interações dos diferentes atores com as funcionalidad
 🧑‍💻 Equipe
 Este projeto foi elaborado e desenvolvido por:
 
-Bruno Goulart Garcia 
-Tiago Martins Rodrigues Joao 
-Bernardo Gomez Karsten 
+Bruno Goulart Garcia, 
+Tiago Martins Rodrigues Joao, 
+Bernardo Gomez Karsten, 
 Caire de Marco Maia 
