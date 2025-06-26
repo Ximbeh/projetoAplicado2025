@@ -422,3 +422,21 @@ exports.mudarStatusPedido = async (req, res, next) => {
     next(err);
   }
 };
+
+// pedido em específico baseadoi no id, passo o id e retorna todas as informações do pedido 
+
+exports.pedidosAtivosCliente = async (req, res, next) => {
+  try {
+    const id_cliente = req.usuario.id;
+
+    const [pedidos] = await pool.query(
+      `SELECT * FROM Pedidos 
+       WHERE cliente_id = ? AND status IN ('criado', 'aceito', 'em_transito')`,
+      [id_cliente]
+    );
+
+    res.json({ success: true, data: pedidos });
+  } catch (err) {
+    next(err);
+  }
+};

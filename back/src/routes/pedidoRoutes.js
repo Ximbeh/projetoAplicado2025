@@ -14,6 +14,9 @@ router.get(
   pedidoController.pedidosEmAndamentoCliente
 );
 
+// Cliente ver um pedido específico
+router.get('/pedidos/ativos-cliente', auth, pedidoController.pedidosAtivosCliente);
+
 // Cliente - Ver histórico de pedidos
 router.get(
   "/pedidos/cliente/historico",
@@ -59,5 +62,7 @@ router.get(
 
 // Calcular valor estimado (sem criar pedido ainda)
 router.post("/pedidos/calcular", pedidoController.calcularValorPedido);
+
+
 
 module.exports = router;
