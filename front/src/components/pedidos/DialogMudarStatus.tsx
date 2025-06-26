@@ -16,6 +16,7 @@ import { PedidoStatus } from "@/types/pedidos";
 import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
+import { api } from "@/services/api";
 
 type Props = {
   open: boolean;
@@ -23,15 +24,17 @@ type Props = {
   pedidoId: string;
 };
 
-async function mudarStatus(pedidoId: string, novoStatus: PedidoStatus) {
-  const res = await fetch("/api/pedidos/mudarStatus", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ pedidoId, novoStatus }),
+async function mudarStatus(pedido_id: string, status: PedidoStatus) {
+  const res = await api.put("/pedidos/motoboy/status", {
+    pedido_id,
+    status,
   });
 
-  if (!res.ok) throw new Error("Erro ao mudar status do pedido");
-  return res.json();
+  if (!res.data.success) {
+    throw new Error(res.data.message || "Erro ao atualizar status");
+  }
+
+  return res.data;
 }
 
 function formatarStatus(status: string): string {
@@ -50,6 +53,7 @@ export default function DialogMudarStatus({ open, onClose, pedidoId }: Props) {
     onSuccess: () => {
       enqueueSnackbar("Status atualizado com sucesso!", { variant: "success" });
       onClose();
+      router.refresh(); // atualiza a página se necessário
     },
     onError: (error: Error) => {
       enqueueSnackbar("Erro: " + error.message, { variant: "error" });
