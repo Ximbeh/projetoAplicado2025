@@ -1,53 +1,43 @@
+// src/routes/pedidoRoutes.js
 const express = require('express');
 const router = express.Router();
 const pedidoController = require('../controllers/pedidoController');
 const auth = require('../middlewares/authMiddleware');
 
-// Criar novo pedido
+// Cliente - Criar novo pedido (com cálculo automático)
 router.post('/pedidos', auth, pedidoController.criarPedido);
 
-// Listar todos os pedidos disponíveis (excluindo recusados pelo motoboy)
+// Cliente - Ver pedidos em andamento
+router.get('/pedidos/cliente/andamento', auth, pedidoController.pedidosEmAndamentoCliente);
+
+// Cliente - Ver histórico de pedidos
+router.get('/pedidos/cliente/historico', auth, pedidoController.historicoCliente);
+
+// Motoboy - Listar pedidos disponíveis (não recusados ainda)
 router.get('/pedidos', auth, pedidoController.listarPedidos);
 
-// Aceitar pedido
+// Motoboy - Ver pedidos aceitos/ativos
+router.get('/pedidos/motoboy/ativos', auth, pedidoController.pedidosAtivosMotoboy);
+
+// Motoboy - Ver histórico de entregas
+router.get('/pedidos/motoboy/historico', auth, pedidoController.historicoMotoboy);
+
+// Motoboy - Aceitar pedido
 router.post('/pedidos/aceitar', auth, pedidoController.aceitarPedido);
 
-// Recusar pedido
+// Motoboy - Recusar pedido
 router.post('/pedidos/recusar', auth, pedidoController.recusarPedido);
 
-// Concluir pedido (com imagem base64)
+// Motoboy - Mudar status para "em_transito"
+router.put('/pedidos/motoboy/status', auth, pedidoController.mudarStatusPedido);
+
+// Motoboy - Concluir pedido com imagem base64
 router.put('/pedidos/concluir', auth, pedidoController.concluirPedido);
 
-// Consultar histórico de um pedido específico
+// Todos - Consultar histórico de um pedido específico
 router.get('/pedidos/:id_pedido/historico', auth, pedidoController.historicoPedido);
 
-// Rota temporaria - teste Geocode
-const { buscarCoordenadas } = require('../utils/geocode');
-
-router.get('/teste-geocode', async (req, res) => {
-  const { cep, logradouro, numero } = req.query;
-
-  try {
-    const coords = await buscarCoordenadas(cep, logradouro, numero);
-    res.json({ sucesso: true, coordenadas: coords });
-  } catch (err) {
-    res.status(500).json({ erro: err.message });
-  }
-});
-
-// Rota temporaria - teste OpenRouteService
-const { calcularTempoDistancia } = require('../utils/orsService');
-
-router.get('/teste-ors', async (req, res) => {
-  const origem = { lat: -26.9182, lng: -49.0661 }; // Blumenau, por exemplo
-  const destino = { lat: -26.9165, lng: -49.0714 }; // Outro ponto de Blumenau
-
-  try {
-    const resultado = await calcularTempoDistancia(origem, destino);
-    res.json({ sucesso: true, resultado });
-  } catch (err) {
-    res.status(500).json({ erro: err.message });
-  }
-});
+// Calcular valor estimado (sem criar pedido ainda)
+router.post('/pedidos/calcular', pedidoController.calcularValorPedido);
 
 module.exports = router;

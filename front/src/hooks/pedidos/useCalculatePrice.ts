@@ -29,31 +29,28 @@ type CalcularPrecoPayload = {
 };
 
 type CalcularPrecoResponse = {
-  preco: string;
+  preco_estimado: string;
+  distancia_km: number;
+  tempo_estimado: number;
 };
+
 export function useCalculatePrice() {
   return useMutation<CalcularPrecoResponse, Error, CalcularPrecoPayload>({
     mutationFn: async ({ origem, destino, peso }) => {
-      const origemPos = await api.post("/calcularPosicao", origem);
-      const destinoPos = await api.post("/calcularPosicao", destino);
-
-      const origemCoords = origemPos.data;
-      const destinoCoords = destinoPos.data;
-
-      const tempoRes = await api.post("/calcularTempo", {
-        origem: origemCoords,
-        destino: destinoCoords,
-      });
-
-      const { tempo, distancia } = tempoRes.data;
-
-      const precoRes = await api.post("/calcularPreco", {
+      const response = await api.post("/pedidos/calcular", {
         peso,
-        distancia,
-        tempo,
+        cep_origem: origem.cep,
+        logradouro_origem: origem.logradouro,
+        numero_origem: origem.numero,
+        cep_destino: destino.cep,
+        logradouro_destino: destino.logradouro,
+        numero_destino: destino.numero,
       });
 
-      return precoRes.data;
+      return response.data;
+    },
+    onError: () => {
+      enqueueSnackbar("Erro ao calcular valor do pedido.", { variant: "error" });
     },
   });
 }

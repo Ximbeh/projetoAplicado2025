@@ -55,7 +55,29 @@ export default function NovoPedido() {
       const data = methods.getValues();
 
       try {
-        await axios.post("http://localhost:3333/api/login/usuario", data);
+        const token = localStorage.getItem("token");
+
+await axios.post(
+  "http://localhost:3333/api/pedidos",
+  {
+    id_usuario: 33, // ou recupere dinamicamente do token se preferir
+    conteudo: data.conteudo,
+    peso: parseFloat(data.pesoPedido),
+    cep_origem: data.cepOrigem,
+    logradouro_origem: data.logradouroOrigem,
+    numero_origem: data.numeroOrigem,
+    complemento_origem: data.complementoOrigem,
+    cep_destino: data.cepDestino,
+    logradouro_destino: data.logradouroDestino,
+    numero_destino: data.numeroDestino,
+    complemento_destino: data.complementoDestino
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
         setStep(6); // Sucesso
       } catch (error) {
         console.error("Erro ao cadastrar:", error);
@@ -87,10 +109,10 @@ export default function NovoPedido() {
       },
       {
         onSuccess: (data) => {
-          enqueueSnackbar(`Preço calculado com sucesso: R$ ${data.preco}`, {
+          enqueueSnackbar(`Preço calculado com sucesso: R$ ${data.preco_estimado}`, {
             variant: "success",
           });
-          methods.setValue("preco", data.preco);
+          methods.setValue("preco", data.preco_estimado);
           setStep(5);
         },
         onError: () => {
