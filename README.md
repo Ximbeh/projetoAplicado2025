@@ -83,17 +83,26 @@ Antes de começar, você vai precisar ter instalado em sua máquina as seguintes
 $ git clone [https://github.com/seu-usuario/seu-repositorio.git](https://github.com/seu-usuario/seu-repositorio.git)
 
 # Acesse a pasta do backend
-$ cd seu-repositorio/backend
+$ cd seu-repositorio/back
 
 # Instale as dependências
 $ npm install
 
-# Execute as migrations do banco de dados (se aplicável)
-$ npm run migrate
-
 # Inicie o servidor
 $ npm run dev
 # O servidor iniciará na porta:3333 - acesse http://localhost:3333
+
+Em um outro terminal:
+# Acesse a pasta do frontend
+$ cd seu-repositorio/front
+
+# Instale as dependências
+$ npm install
+
+# Inicie o servidor
+$ npm run dev
+# O servidor iniciará na porta:3000 - acesse http://localhost:3000
+
 ```
 
 📈 Modelagem do Sistema
