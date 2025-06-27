@@ -22,7 +22,7 @@ export default function PhaseOneNovoPedido({
   const conteudo = watch("conteudo");
   const pesoPedido = watch("pesoPedido");
 
-  const pesoInvalid = pesoPedido > 12;
+  const pesoInvalid = pesoPedido > 12 || pesoPedido <= 0;
 
   const isDisabled = !conteudo || !pesoPedido || pesoInvalid;
 
@@ -42,7 +42,7 @@ export default function PhaseOneNovoPedido({
         error={!!pesoPedido && pesoInvalid}
         helperText={
           !!pesoPedido && pesoInvalid
-            ? "Peso não deve ser maior que 12KG"
+            ? "O pedido deve ser mais pesado que 0kg e mais leve que 12kg"
             : undefined
         }
       />

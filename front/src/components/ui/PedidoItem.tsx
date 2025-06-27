@@ -35,7 +35,9 @@ export default function PedidoItem({ pedido }: PedidoProps) {
         }}
       >
         <Typography color="grey.600" fontSize={8}>
-          {dayjs(pedido.data_criacao).format("DD/MM/YYYY HH:mm")}
+          {dayjs(pedido.data_criacao).isValid()
+            ? dayjs(pedido.data_criacao).format("DD/MM/YYYY HH:mm")
+            : ""}
         </Typography>
         <Typography fontSize={12}>{pedido.conteudo}</Typography>
         <Typography color="grey.600" fontSize={8}>

@@ -13,6 +13,7 @@ const ITEMS_PER_PAGE = 3;
 
 export default function PedidoAndamento() {
   const { data: pedidos, isLoading, isError, error } = useGetHistoricoCliente();
+  console.log("pedido", pedidos);
 
   const pedidosList = pedidos ?? [];
 

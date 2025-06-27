@@ -94,7 +94,12 @@ export default function NovoPedido() {
   const goBack = () => {
     router.back();
   };
-  const onBack = () => setStep((prev) => Math.max(prev - 1, 1));
+  const onBack = () => {
+    setStep((prev) => {
+      if (prev === 5) return 3;
+      return Math.max(prev - 1, 1);
+    });
+  };
   const calculatePrice = () => {
     const data = methods.getValues();
 

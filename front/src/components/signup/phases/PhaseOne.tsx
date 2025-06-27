@@ -1,7 +1,7 @@
 import { Stack, Typography } from "@mui/material";
 import LongInput from "@/components/ui/LongInput";
 import LongButton from "@/components/ui/LongButton";
-import { useFormContext, UseFormRegister, UseFormWatch } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
 interface PhaseOneProps {
   onNext: () => void;
@@ -15,11 +15,15 @@ export default function PhaseOne({ onNext, onLogin }: PhaseOneProps) {
     formState: { errors },
   } = useFormContext();
 
+  const nome = watch("nome") || "";
   const cpf = watch("cpf") || "";
   const telefone = watch("telefone") || "";
 
   const isCPFValid = cpf.replace(/\D/g, "").length === 11;
   const isTelefoneValid = /^\(\d{2}\)\s?\d{5}-\d{4}$/.test(telefone);
+  const isNomeValid = nome.trim().length > 0;
+
+  const isFormValid = isNomeValid && isCPFValid && isTelefoneValid;
 
   return (
     <Stack spacing={2} alignItems="center" width="100%">
@@ -60,7 +64,7 @@ export default function PhaseOne({ onNext, onLogin }: PhaseOneProps) {
         }
       />
 
-      <LongButton label="Continuar" onClick={onNext} />
+      <LongButton label="Continuar" onClick={onNext} disabled={!isFormValid} />
 
       <Typography
         variant="body2"

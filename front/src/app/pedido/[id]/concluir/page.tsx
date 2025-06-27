@@ -59,7 +59,7 @@ export default function ConcluirPedido() {
         pedido_id: pedidoId as string,
         imagemBase64,
         observacao,
-        status: PedidoStatus.Criado as string,
+        status: PedidoStatus.Entregue as string,
       });
     } catch (error) {
       enqueueSnackbar("Erro ao converter imagem.", { variant: "error" });

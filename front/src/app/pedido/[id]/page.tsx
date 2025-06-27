@@ -142,7 +142,7 @@ export default function PedidoPage() {
             <InfoDoubleText title={"Status:"} info={pedido.status} />
             <InfoDoubleText
               title={"Preço final estimado:"}
-              info={pedido.preco}
+              info={`R$${pedido.preco}`}
               bigInfo={true}
               extra={<InfoIconWithModal />}
             />

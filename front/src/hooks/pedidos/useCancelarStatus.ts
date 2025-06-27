@@ -31,7 +31,7 @@ export function useCancelarPedido() {
     },
     onSuccess: () => {
       enqueueSnackbar("Pedido Cancelado com sucesso!", { variant: "success" });
-      router.push("/dashboard/motoboy");
+      router.push("/dashboard/cliente");
     },
     onError: (error) => {
       enqueueSnackbar("Erro ao cancelar o pedido.", { variant: "error" });
