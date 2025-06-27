@@ -44,8 +44,10 @@ export default function NovoPedido() {
     router.push("/dashboard/cliente");
   };
   const goToNewPedido = () => {
-    router.push("/dashboard/cliente/novoPedido");
+    methods.reset();
+    setStep(1);
   };
+
   const acompanhar = () => {
     console.log("acompanhar");
   };

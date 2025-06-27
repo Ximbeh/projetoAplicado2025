@@ -1,6 +1,7 @@
 import { Stack, Typography } from "@mui/material";
 import LongInput from "@/components/ui/LongInput";
 import LongButton from "@/components/ui/LongButton";
+import { useFormContext, UseFormRegister, UseFormWatch } from "react-hook-form";
 
 interface PhaseOneProps {
   onNext: () => void;
@@ -8,11 +9,56 @@ interface PhaseOneProps {
 }
 
 export default function PhaseOne({ onNext, onLogin }: PhaseOneProps) {
+  const {
+    register,
+    watch,
+    formState: { errors },
+  } = useFormContext();
+
+  const cpf = watch("cpf") || "";
+  const telefone = watch("telefone") || "";
+
+  const isCPFValid = cpf.replace(/\D/g, "").length === 11;
+  const isTelefoneValid = /^\(\d{2}\)\s?\d{5}-\d{4}$/.test(telefone);
+
   return (
     <Stack spacing={2} alignItems="center" width="100%">
-      <LongInput label="Nome" type="text" name="nome" />
-      <LongInput label="CPF" type="text" name="cpf" />
-      <LongInput label="Telefone" type="tel" name="telefone" />
+      <LongInput
+        label="Nome"
+        type="text"
+        {...register("nome", { required: "Nome é obrigatório" })}
+        error={!!errors.nome}
+        helperText={errors.nome?.message as string}
+      />
+
+      <LongInput
+        label="CPF"
+        type="text"
+        {...register("cpf", {
+          required: "CPF é obrigatório",
+          validate: () => isCPFValid || "CPF inválido. Use 000.000.000-00",
+        })}
+        error={!!cpf && !isCPFValid}
+        helperText={
+          !!cpf && !isCPFValid ? "CPF inválido. Use 000.000.000-00" : undefined
+        }
+      />
+
+      <LongInput
+        label="Telefone"
+        type="tel"
+        {...register("telefone", {
+          required: "Telefone é obrigatório",
+          validate: () =>
+            isTelefoneValid || "Telefone inválido. Use (00) 00000-0000",
+        })}
+        error={!!telefone && !isTelefoneValid}
+        helperText={
+          !!telefone && !isTelefoneValid
+            ? "Telefone inválido. Use (00)00000-0000"
+            : undefined
+        }
+      />
 
       <LongButton label="Continuar" onClick={onNext} />
 
