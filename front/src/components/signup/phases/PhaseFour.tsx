@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 import LongInput from "@/components/ui/LongInput";
 import DualButton from "@/components/ui/DualButton";
 

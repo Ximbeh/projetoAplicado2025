@@ -51,7 +51,19 @@ export default function SignupPage() {
     }
   };
 
-  const back = () => setStep((prev) => Math.max(prev - 1, 1));
+  const back = () => {
+    if (step === 4) {
+      const tipo = methods.getValues("tipo");
+      if (tipo === "cliente") {
+        setStep(2); // volta para a PhaseTwo
+        return;
+      }
+      // se não for cliente, volta para a PhaseThree
+      setStep(3);
+    } else {
+      setStep((prev) => Math.max(prev - 1, 1));
+    }
+  };
   const goToLogin = () => router.push("/");
 
   return (
