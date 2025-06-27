@@ -7,12 +7,11 @@ const { buscarCoordenadas } = require("../utils/geocode");
 const { calcularTempoDistancia } = require("../utils/orsService");
 
 // Criar novo pedido com cálculo automático
-exports.criarPedido = async (req, res) => {
+exports.criarPedido = async (req, res, next) => {
   try {
     const {
-      id_usuario,
-      conteudo,
       peso,
+      conteudo,
       cep_origem,
       logradouro_origem,
       numero_origem,
@@ -20,72 +19,86 @@ exports.criarPedido = async (req, res) => {
       cep_destino,
       logradouro_destino,
       numero_destino,
-      complemento_destino,
+      complemento_destino
     } = req.body;
 
+    const cliente_id = req.usuario.id;
+
+    // Verificar campos obrigatórios
     if (
-      !id_usuario ||
-      !conteudo ||
-      !peso ||
-      !cep_origem ||
-      !logradouro_origem ||
-      !numero_origem ||
-      !cep_destino ||
-      !logradouro_destino ||
-      !numero_destino
+      !peso || !conteudo || !cep_origem || !logradouro_origem || !numero_origem ||
+      !cep_destino || !logradouro_destino || !numero_destino
     ) {
       return res.status(400).json({ erro: "Campos obrigatórios ausentes." });
     }
 
-    const origemCoords = await buscarCoordenadas(
-      cep_origem,
-      logradouro_origem,
-      numero_origem
-    );
-    const destinoCoords = await buscarCoordenadas(
-      cep_destino,
-      logradouro_destino,
-      numero_destino
-    );
-
-    if (!origemCoords || !destinoCoords) {
-      return res
-        .status(400)
-        .json({ erro: "Não foi possível localizar os endereços." });
+    // Verificar limite de peso
+    if (peso > 12) {
+      return res.status(400).json({ erro: "Peso excede o limite de 12kg. Não transportamos acima desse valor." });
     }
 
-    const { distancia_km, tempo_estimado } = await calcularTempoDistancia(
-      origemCoords,
-      destinoCoords
+    // Definir taxa adicional conforme peso
+    let taxaPeso = 0;
+    if (peso < 1) {
+      taxaPeso = 3;
+    } else if (peso >= 1 && peso < 3) {
+      taxaPeso = 5;
+    } else if (peso >= 3 && peso < 8) {
+      taxaPeso = 9;
+    } else if (peso >= 8 && peso <= 12) {
+      taxaPeso = 12;
+    }
+
+    // Buscar coordenadas
+    const origemCoords = await buscarCoordenadas(cep_origem, logradouro_origem, numero_origem);
+    const destinoCoords = await buscarCoordenadas(cep_destino, logradouro_destino, numero_destino);
+
+    if (!origemCoords || !destinoCoords) {
+      return res.status(400).json({ erro: "Não foi possível localizar os endereços." });
+    }
+
+    // Calcular distância e tempo
+    const { distancia_km, tempo_estimado } = await calcularTempoDistancia(origemCoords, destinoCoords);
+
+    // Calcular preço total
+    const precoBase = distancia_km * 2.5;
+    const preco = parseFloat(precoBase + taxaPeso).toFixed(2);
+
+    // Inserir pedido no banco
+    const [resultado] = await pool.query(
+      `INSERT INTO Pedidos 
+        (cliente_id, peso, distancia_km, tempo_estimado, preco, status, conteudo,
+         cep_origem, logradouro_origem, numero_origem, complemento_origem,
+         cep_destino, logradouro_destino, numero_destino, complemento_destino)
+       VALUES (?, ?, ?, ?, ?, 'criado', ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        cliente_id, peso, distancia_km, tempo_estimado, preco, conteudo,
+        cep_origem, logradouro_origem, numero_origem, complemento_origem,
+        cep_destino, logradouro_destino, numero_destino, complemento_destino
+      ]
     );
 
-    const pesoFloat = parseFloat(peso);
-    const preco = parseFloat(distancia_km * 2.5 + pesoFloat * 0.5).toFixed(2);
+    // Adicionar ao histórico de status
+    const pedido_id = resultado.insertId;
+    await pool.query(
+      `INSERT INTO HistoricoEntregas (pedido_id, status) VALUES (?, 'criado')`,
+      [pedido_id]
+    );
 
-    const novoPedido = await Pedido.create({
-      cliente_id: id_usuario,
-      conteudo,
-      peso: pesoFloat,
-      cep_origem,
-      logradouro_origem,
-      numero_origem,
-      complemento_origem,
-      cep_destino,
-      logradouro_destino,
-      numero_destino,
-      complemento_destino,
-      distancia_km,
-      tempo_estimado,
+    return res.status(201).json({
+      sucesso: true,
+      mensagem: "Pedido criado com sucesso.",
+      pedido_id,
       preco,
-      status: "Criado",
+      distancia_km,
+      tempo_estimado
     });
-
-    return res.status(201).json({ sucesso: true, pedido: novoPedido });
   } catch (error) {
     console.error("Erro ao criar pedido:", error);
-    return res.status(500).json({ erro: "Erro interno do servidor" });
+    return res.status(500).json({ erro: "Erro ao criar pedido." });
   }
 };
+
 
 // Calcular valor estimado
 exports.calcularValorPedido = async (req, res) => {
@@ -114,6 +127,25 @@ exports.calcularValorPedido = async (req, res) => {
         .json({ erro: "Campos obrigatórios ausentes para cálculo." });
     }
 
+    // Verificar limite de peso
+    if (peso > 12) {
+      return res
+        .status(400)
+        .json({ erro: "Peso excede o limite de 12kg. Não transportamos acima desse valor." });
+    }
+
+    // Calcular taxa adicional por faixa de peso
+    let taxaPeso = 0;
+    if (peso < 1) {
+      taxaPeso = 3;
+    } else if (peso >= 1 && peso < 3) {
+      taxaPeso = 5;
+    } else if (peso >= 3 && peso < 8) {
+      taxaPeso = 9;
+    } else if (peso >= 8 && peso <= 12) {
+      taxaPeso = 12;
+    }
+
     const origemCoords = await buscarCoordenadas(
       cep_origem,
       logradouro_origem,
@@ -135,20 +167,23 @@ exports.calcularValorPedido = async (req, res) => {
       origemCoords,
       destinoCoords
     );
-    const preco = parseFloat(distancia_km * 2.5 + peso * 0.5).toFixed(2);
+
+    const precoBase = distancia_km * 2.5;
+    const precoFinal = parseFloat(precoBase + taxaPeso).toFixed(2);
 
     return res.status(200).json({
       sucesso: true,
       loading: false,
       distancia_km,
       tempo_estimado,
-      preco_estimado: preco,
+      preco_estimado: precoFinal,
     });
   } catch (error) {
     console.error("Erro ao calcular valor do pedido:", error);
     return res.status(500).json({ erro: "Erro ao calcular valor estimado." });
   }
 };
+
 
 // Listar todos os pedidos disponíveis (excluindo recusados)
 exports.listarPedidos = async (req, res, next) => {
