@@ -1,7 +1,7 @@
 // src/routes/pedidoRoutes.js
 const express = require("express");
 const router = express.Router();
-const pedidoController = require("../controllers/pedidoController");
+const pedidoController = require("../controllers/pedidocontroller");
 const auth = require("../middlewares/authMiddleware");
 
 // Cliente - Criar novo pedido (com cálculo automático)
@@ -15,7 +15,7 @@ router.get(
 );
 
 // Cliente ver um pedido específico
-router.get('/pedidos/ativos-cliente', auth, pedidoController.pedidosAtivosCliente);
+router.get("/pedidos/:id_pedido", auth, pedidoController.pedidoDoClientePorId);
 
 // Cliente - Ver histórico de pedidos
 router.get(
@@ -23,6 +23,9 @@ router.get(
   auth,
   pedidoController.historicoCliente
 );
+
+//Cliente - Cancela pedido
+router.put("/pedidos/cliente/cancelar", auth, pedidoController.cancelarPedido);
 
 // Motoboy - Listar pedidos disponíveis (não recusados ainda)
 router.get("/pedidos", auth, pedidoController.listarPedidos);
@@ -62,7 +65,5 @@ router.get(
 
 // Calcular valor estimado (sem criar pedido ainda)
 router.post("/pedidos/calcular", pedidoController.calcularValorPedido);
-
-
 
 module.exports = router;

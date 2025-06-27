@@ -11,13 +11,17 @@ import {
   Box,
   Button,
 } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react";
 import { PedidoStatus } from "@/types/pedidos";
 import { enqueueSnackbar } from "notistack";
+import { useConcluirPedido } from "@/hooks/pedidos/useConcluirPedido";
 
 export default function FalhouPedido() {
+  const { mutate, isPending } = useConcluirPedido();
   const router = useRouter();
+  const params = useParams();
+  const pedidoId = params?.id;
 
   const [imagem, setImagem] = useState<File | null>(null);
   const [observacao, setObservacao] = useState("");
@@ -41,31 +45,24 @@ export default function FalhouPedido() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("imagem", imagem);
-    formData.append("observacao", observacao);
-    formData.append("status", PedidoStatus.Entregue);
+    const toBase64 = (file: File): Promise<string> =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+      });
 
     try {
-      const response = await fetch("/api/pedidos/concluirPedido", {
-        method: "POST",
-        body: formData,
+      const imagemBase64 = await toBase64(imagem);
+      mutate({
+        pedido_id: pedidoId as string,
+        imagemBase64,
+        observacao,
+        status: PedidoStatus.Falhou as string,
       });
-
-      if (response.ok) {
-        enqueueSnackbar("Pedido alterado com sucesso!", {
-          variant: "success",
-        });
-        router.push("/dashboard/motoboy");
-      } else {
-        enqueueSnackbar("Erro ao alterar o pedido.", {
-          variant: "error",
-        });
-      }
     } catch (error) {
-      enqueueSnackbar("Erro ao enviar dados.", {
-        variant: "error",
-      });
+      enqueueSnackbar("Erro ao converter imagem.", { variant: "error" });
     }
   };
 

@@ -3,31 +3,24 @@
 import { useState } from "react";
 import HeaderIcon from "@/components/HeaderIcon";
 import Title from "@/components/ui/Title";
-import { useGetPedidos } from "@/hooks/pedidos/useGetPedidos";
 import { Container, Stack, Typography, CircularProgress } from "@mui/material";
 import PedidoList from "@/components/pedidos/PedidoList";
 import PaginationControls from "@/components/PaginationControlls";
 import { PedidoStatus } from "@/types/pedidos";
+import { useGetHistoricoCliente } from "@/hooks/pedidos/useGetHistoricoCliente";
 
 const ITEMS_PER_PAGE = 3;
 
 export default function PedidoAndamento() {
-  const { data: pedidos, isLoading, isError, error } = useGetPedidos();
+  const { data: pedidos, isLoading, isError, error } = useGetHistoricoCliente();
 
   const pedidosList = pedidos ?? [];
 
-  const pedidosFiltrados = pedidosList.filter((pedido) => {
-    const pertenceAoUsuario = pedido.id_usuario === 1;
-    const statusFilter = pedido.status === PedidoStatus.Entregue;
-
-    return pertenceAoUsuario && statusFilter;
-  });
-
   const [page, setPage] = useState(1);
 
-  const totalPages = Math.ceil(pedidosFiltrados.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(pedidosList.length / ITEMS_PER_PAGE);
 
-  const pedidosAtuais = pedidosFiltrados.slice(
+  const pedidosAtuais = pedidosList.slice(
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE
   );
@@ -66,7 +59,7 @@ export default function PedidoAndamento() {
             </Typography>
           )}
 
-          {!isLoading && pedidosFiltrados.length === 0 && (
+          {!isLoading && pedidosList.length === 0 && (
             <Typography>Nenhum pedido.</Typography>
           )}
 

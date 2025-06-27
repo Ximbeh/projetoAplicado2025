@@ -8,11 +8,17 @@ import { Container, Stack, Typography, CircularProgress } from "@mui/material";
 import PedidoList from "@/components/pedidos/PedidoList";
 import PaginationControls from "@/components/PaginationControlls";
 import { PedidoStatus } from "@/types/pedidos";
+import { useGetPedidosAndamentoMotoboy } from "@/hooks/pedidos/useGetPedidosAtivosMotoboy";
 
 const ITEMS_PER_PAGE = 3;
 
 export default function PedidosAtivos() {
-  const { data: pedidos, isLoading, isError, error } = useGetPedidos();
+  const {
+    data: pedidos,
+    isLoading,
+    isError,
+    error,
+  } = useGetPedidosAndamentoMotoboy();
 
   const pedidosList = pedidos ?? [];
 
@@ -24,7 +30,7 @@ export default function PedidosAtivos() {
   const idUsuario = Number(usuarioLogado?.id);
 
   const pedidosFiltrados = pedidosList.filter((pedido) => {
-    const pedidoUsuario = pedido.id_entregador == idUsuario;
+    const pedidoUsuario = pedido.motoboy_id == idUsuario;
     const pedidoNaoTerminado = pedido.status !== PedidoStatus.Entregue;
 
     return pedidoUsuario && pedidoNaoTerminado;
@@ -61,7 +67,7 @@ export default function PedidosAtivos() {
           alignItems="center"
           width="100%"
         >
-          <Title string={"Novos pedidos"} />
+          <Title string={"Pedidos ativos"} />
 
           {isLoading && <CircularProgress />}
 

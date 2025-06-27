@@ -158,9 +158,10 @@ exports.listarPedidos = async (req, res, next) => {
     const [pedidos] = await pool.query(
       `
       SELECT * FROM Pedidos
-      WHERE id_pedido NOT IN (
-        SELECT pedido_id FROM RecusasPedidos WHERE motoboy_id = ?
-      )
+WHERE status = 'Criado'
+  AND id_pedido NOT IN (
+    SELECT pedido_id FROM RecusasPedidos WHERE motoboy_id = ?
+)
     `,
       [id_motoboy]
     );
@@ -174,7 +175,7 @@ exports.listarPedidos = async (req, res, next) => {
         const recusados = recusas.map((r) => r.motoboy_id);
 
         return {
-          id: pedido.id_pedido,
+          id_pedido: pedido.id_pedido,
           id_usuario: pedido.cliente_id,
           id_entregador: pedido.motoboy_id || null,
           id_entregadoresRecusado: recusados,
@@ -301,7 +302,7 @@ exports.recusarPedido = async (req, res, next) => {
 // Concluir pedido com comprovante (imagem base64)
 exports.concluirPedido = async (req, res, next) => {
   try {
-    const { pedido_id, imagemBase64 } = req.body;
+    const { pedido_id, imagemBase64, observacao, status } = req.body;
 
     const imagemBuffer = Buffer.from(imagemBase64, "base64");
     const filePath = path.join(
@@ -310,13 +311,13 @@ exports.concluirPedido = async (req, res, next) => {
     );
     fs.writeFileSync(filePath, imagemBuffer);
 
+    await pool.query(`UPDATE Pedidos SET status = ? WHERE id_pedido = ?`, [
+      status,
+      pedido_id,
+    ]);
     await pool.query(
-      `UPDATE Pedidos SET status = 'Entregue' WHERE id_pedido = ?`,
-      [pedido_id]
-    );
-    await pool.query(
-      `INSERT INTO HistoricoEntregas (pedido_id, status) VALUES (?, 'Entregue')`,
-      [pedido_id]
+      `INSERT INTO HistoricoEntregas (pedido_id, status) VALUES (?, ?)`,
+      [pedido_id, status]
     );
 
     res.json({ success: true, message: "Pedido concluído com sucesso" });
@@ -360,7 +361,7 @@ exports.historicoCliente = async (req, res, next) => {
   try {
     const id_cliente = req.usuario.id;
     const [pedidos] = await pool.query(
-      `SELECT * FROM Pedidos WHERE cliente_id = ? AND status IN ('Entregue', 'Cancelado')`,
+      `SELECT * FROM Pedidos WHERE cliente_id = ? AND status IN ('Entregue', 'Cancelado', 'Falhou')`,
       [id_cliente]
     );
     res.json({ success: true, data: pedidos });
@@ -388,10 +389,49 @@ exports.historicoMotoboy = async (req, res, next) => {
   try {
     const id_motoboy = req.usuario.id;
     const [pedidos] = await pool.query(
-      `SELECT * FROM Pedidos WHERE motoboy_id = ? AND status IN ('Entregue', 'Cancelado')`,
+      `SELECT * FROM Pedidos WHERE motoboy_id = ? AND status IN ('Entregue', 'Cancelado', 'Falhou')`,
       [id_motoboy]
     );
     res.json({ success: true, data: pedidos });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.cancelarPedido = async (req, res, next) => {
+  try {
+    const { pedido_id } = req.body;
+    const id_cliente = req.usuario.id;
+
+    if (!pedido_id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "ID do pedido é obrigatório" });
+    }
+
+    const [resultado] = await pool.query(
+      `SELECT * FROM Pedidos WHERE id_pedido = ? AND cliente_id = ?`,
+      [pedido_id, id_cliente]
+    );
+
+    if (resultado.length === 0) {
+      return res.status(403).json({
+        success: false,
+        message: "Pedido não encontrado ou não pertence a este cliente",
+      });
+    }
+
+    await pool.query(
+      `UPDATE Pedidos SET status = 'Cancelado' WHERE id_pedido = ?`,
+      [pedido_id]
+    );
+
+    await pool.query(
+      `INSERT INTO HistoricoEntregas (pedido_id, status, data_status) VALUES (?, 'Cancelado', NOW())`,
+      [pedido_id]
+    );
+
+    res.json({ success: true, message: "Pedido cancelado com sucesso" });
   } catch (err) {
     next(err);
   }
@@ -423,19 +463,25 @@ exports.mudarStatusPedido = async (req, res, next) => {
   }
 };
 
-// pedido em específico baseadoi no id, passo o id e retorna todas as informações do pedido 
-
-exports.pedidosAtivosCliente = async (req, res, next) => {
+// pedido em específico baseadoi no id, passo o id e retorna todas as informações do pedido
+exports.pedidoDoClientePorId = async (req, res, next) => {
   try {
-    const id_cliente = req.usuario.id;
+    const { id_pedido } = req.params;
 
     const [pedidos] = await pool.query(
       `SELECT * FROM Pedidos 
-       WHERE cliente_id = ? AND status IN ('criado', 'aceito', 'em_transito')`,
-      [id_cliente]
+       WHERE id_pedido = ?`,
+      [id_pedido]
     );
 
-    res.json({ success: true, data: pedidos });
+    if (pedidos.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Pedido não encontrado",
+      });
+    }
+
+    res.json({ success: true, data: pedidos[0] });
   } catch (err) {
     next(err);
   }

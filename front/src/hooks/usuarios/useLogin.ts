@@ -3,8 +3,8 @@ import { useRouter } from "next/navigation";
 import { useSnackbar } from "notistack";
 
 type LoginData = {
-  username: string;
-  password: string;
+  email: string;
+  senha: string;
 };
 
 async function postLogin(data: LoginData) {

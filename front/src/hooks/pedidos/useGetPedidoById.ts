@@ -18,15 +18,24 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-async function fetchPedidos(): Promise<Pedido[]> {
-  const response = await api.get("/pedidos/cliente/andamento");
+// Função que busca um pedido por ID
+async function fetchPedidoById({
+  queryKey,
+}: {
+  queryKey: [string, number];
+}): Promise<Pedido> {
+  const [, pedidoId] = queryKey;
+  const response = await api.get(`/pedidos/${pedidoId}`);
+  console.log(response.data);
   return response.data.data;
 }
 
-export function useGetPedidosAndamento() {
+// Hook que usa essa função
+export function useGetPedidoById(pedidoId: number) {
   const { data, error, isLoading, isError, refetch } = useQuery({
-    queryKey: ["pedidos-andamento"],
-    queryFn: fetchPedidos,
+    queryKey: ["pedido", pedidoId],
+    queryFn: fetchPedidoById,
+    enabled: !!pedidoId, // só faz a requisição se tiver um id válido
   });
 
   return {

@@ -19,13 +19,13 @@ api.interceptors.request.use((config) => {
 });
 
 async function fetchPedidos(): Promise<Pedido[]> {
-  const response = await api.get("/pedidos/cliente/andamento");
+  const response = await api.get("/pedidos/motoboy/ativos");
   return response.data.data;
 }
 
-export function useGetPedidosAndamento() {
+export function useGetPedidosAndamentoMotoboy() {
   const { data, error, isLoading, isError, refetch } = useQuery({
-    queryKey: ["pedidos-andamento"],
+    queryKey: ["pedidos-andamento-motoboy"],
     queryFn: fetchPedidos,
   });
 

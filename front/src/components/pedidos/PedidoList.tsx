@@ -9,6 +9,8 @@ interface PedidoListProps {
 }
 
 export default function PedidoList({ pedidos }: PedidoListProps) {
+  console.log(pedidos);
+
   return (
     <Stack width="100%" spacing={1}>
       {pedidos.map((pedido) => (

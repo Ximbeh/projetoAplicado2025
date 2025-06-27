@@ -8,32 +8,20 @@ import { Container, Stack, Typography, CircularProgress } from "@mui/material";
 import PedidoList from "@/components/pedidos/PedidoList";
 import PaginationControls from "@/components/PaginationControlls";
 import { PedidoStatus } from "@/types/pedidos";
+import { useGetHistoricoMotoboy } from "@/hooks/pedidos/useGetHistoricoMotoboy";
 
 const ITEMS_PER_PAGE = 3;
 
 export default function HistoricoPedidos() {
-  const { data: pedidos, isLoading, isError, error } = useGetPedidos();
+  const { data: pedidos, isLoading, isError, error } = useGetHistoricoMotoboy();
 
   const pedidosList = pedidos ?? [];
 
-  const usuarioLogado =
-    typeof window !== "undefined"
-      ? JSON.parse(localStorage.getItem("usuarioLogado") || "null")
-      : null;
-
-  const idUsuario = usuarioLogado?.id;
-
-  const pedidosFiltrados = pedidosList.filter((pedido) => {
-    const pedidoUsuario = pedido.id_entregador == idUsuario;
-    const pedidoTerminado = pedido.status === PedidoStatus.Entregue;
-    return pedidoUsuario && pedidoTerminado;
-  });
-
   const [page, setPage] = useState(1);
 
-  const totalPages = Math.ceil(pedidosFiltrados.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(pedidosList.length / ITEMS_PER_PAGE);
 
-  const pedidosAtuais = pedidosFiltrados.slice(
+  const pedidosAtuais = pedidosList.slice(
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE
   );
@@ -72,7 +60,7 @@ export default function HistoricoPedidos() {
             </Typography>
           )}
 
-          {!isLoading && pedidosFiltrados.length === 0 && (
+          {!isLoading && pedidosList.length === 0 && (
             <Typography>Nenhum pedido.</Typography>
           )}
 

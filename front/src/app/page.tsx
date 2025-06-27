@@ -3,11 +3,9 @@
 import { Container, Stack, Typography } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { useSnackbar } from "notistack";
 import Logo from "@/components/ui/Logo";
 import LongInput from "@/components/ui/LongInput";
 import LongButton from "@/components/ui/LongButton";
-import Link from "next/link";
 import { useLogin } from "@/hooks/usuarios/useLogin";
 
 type LoginFormData = {
@@ -17,7 +15,6 @@ type LoginFormData = {
 
 export default function LoginPage() {
   const router = useRouter();
-  const { enqueueSnackbar } = useSnackbar();
 
   const methods = useForm<LoginFormData>();
 

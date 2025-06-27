@@ -19,13 +19,13 @@ api.interceptors.request.use((config) => {
 });
 
 async function fetchPedidos(): Promise<Pedido[]> {
-  const response = await api.get("/pedidos/cliente/andamento");
+  const response = await api.get("/pedidos/motoboy/historico");
   return response.data.data;
 }
 
-export function useGetPedidosAndamento() {
+export function useGetHistoricoMotoboy() {
   const { data, error, isLoading, isError, refetch } = useQuery({
-    queryKey: ["pedidos-andamento"],
+    queryKey: ["pedidos-historico"],
     queryFn: fetchPedidos,
   });
 

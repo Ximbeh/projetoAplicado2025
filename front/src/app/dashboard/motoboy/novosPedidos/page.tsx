@@ -3,43 +3,34 @@
 import { useState } from "react";
 import HeaderIcon from "@/components/HeaderIcon";
 import Title from "@/components/ui/Title";
-import { useGetPedidos } from "@/hooks/pedidos/useGetPedidos";
 import { Container, Stack, Typography, CircularProgress } from "@mui/material";
 import PedidoList from "@/components/pedidos/PedidoList";
 import PaginationControls from "@/components/PaginationControlls";
 import { PedidoStatus } from "@/types/pedidos";
+import { useGetPedidosDisponiveis } from "@/hooks/pedidos/useGetPedidosDisponiveis";
 
 const ITEMS_PER_PAGE = 3;
 
 export default function NovosPedidos() {
-  const { data: pedidos, isLoading, isError, error } = useGetPedidos();
+  const {
+    data: pedidos,
+    isLoading,
+    isError,
+    error,
+  } = useGetPedidosDisponiveis();
 
   const pedidosList = pedidos ?? [];
 
-  const usuarioLogado =
-    typeof window !== "undefined"
-      ? JSON.parse(localStorage.getItem("usuarioLogado") || "null")
-      : null;
-
-  const idUsuario = Number(usuarioLogado?.id);
-
-  const pedidosFiltrados = pedidosList.filter((pedido) => {
-    const pedidoLivre = pedido.id_entregador === null;
-
-    const usuarioNaoRecusou =
-      !Array.isArray(pedido.id_entregadoresRecusado) ||
-      !pedido.id_entregadoresRecusado.includes(idUsuario);
-
-    return pedidoLivre && usuarioNaoRecusou;
-  });
   const [page, setPage] = useState(1);
 
-  const totalPages = Math.ceil(pedidosFiltrados.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(pedidosList.length / ITEMS_PER_PAGE);
 
-  const pedidosAtuais = pedidosFiltrados.slice(
+  const pedidosAtuais = pedidosList.slice(
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE
   );
+
+  console.log("pedidosAtuais: ", pedidosAtuais);
 
   const handlePrevPage = () => setPage((p) => Math.max(p - 1, 1));
   const handleNextPage = () => setPage((p) => Math.min(p + 1, totalPages));
@@ -75,7 +66,7 @@ export default function NovosPedidos() {
             </Typography>
           )}
 
-          {!isLoading && pedidosFiltrados.length === 0 && (
+          {!isLoading && pedidosList.length === 0 && (
             <Typography>Nenhum pedido ativo.</Typography>
           )}
 

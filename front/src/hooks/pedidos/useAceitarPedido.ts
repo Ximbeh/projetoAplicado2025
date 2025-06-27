@@ -23,17 +23,21 @@ api.interceptors.request.use((config) => {
 //to-do: typar
 export function useAceitarPedido() {
   const router = useRouter();
-  return useMutation<Pedido[], Error, { pedidoId: string; idMotoboy: string }>({
-    mutationFn: async ({ pedidoId, idMotoboy }) => {
+  return useMutation<
+    Pedido[],
+    Error,
+    { pedido_id: string; motoboy_id: string }
+  >({
+    mutationFn: async ({ pedido_id, motoboy_id }) => {
       const response = await api.post("/pedidos/aceitar", {
-        pedidoId,
-        idMotoboy,
+        pedido_id,
+        motoboy_id,
       });
       return response.data.data;
     },
     onSuccess: () => {
       enqueueSnackbar("Pedido Aceito com sucesso!", { variant: "success" });
-      router.push("/dashboard/motoby");
+      router.push("/dashboard/motoboy");
     },
     onError: (error) => {
       enqueueSnackbar("Erro ao aceitar o pedido.", { variant: "error" });

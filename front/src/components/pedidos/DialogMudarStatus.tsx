@@ -17,25 +17,13 @@ import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
 import { api } from "@/services/api";
+import { useMudarStatus } from "@/hooks/pedidos/useMudarStatus";
 
 type Props = {
   open: boolean;
   onClose: () => void;
   pedidoId: string;
 };
-
-async function mudarStatus(pedido_id: string, status: PedidoStatus) {
-  const res = await api.put("/pedidos/motoboy/status", {
-    pedido_id,
-    status,
-  });
-
-  if (!res.data.success) {
-    throw new Error(res.data.message || "Erro ao atualizar status");
-  }
-
-  return res.data;
-}
 
 function formatarStatus(status: string): string {
   return status.replace(/([A-Z])/g, (match, p1, offset) =>
@@ -44,21 +32,15 @@ function formatarStatus(status: string): string {
 }
 
 export default function DialogMudarStatus({ open, onClose, pedidoId }: Props) {
+  const { mutate, isPending } = useMudarStatus();
   const [novoStatus, setNovoStatus] = useState<PedidoStatus | "">("");
-  const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
 
-  const mutation = useMutation({
-    mutationFn: () => mudarStatus(pedidoId, novoStatus as PedidoStatus),
-    onSuccess: () => {
-      enqueueSnackbar("Status atualizado com sucesso!", { variant: "success" });
-      onClose();
-      router.refresh(); // atualiza a página se necessário
-    },
-    onError: (error: Error) => {
-      enqueueSnackbar("Erro: " + error.message, { variant: "error" });
-    },
-  });
+  function handleMudarStatus(pedidoId: string, novoStatus: string) {
+    mutate({ pedido_id: pedidoId, status: novoStatus });
+    onClose();
+    router.refresh();
+  }
 
   const handleConfirmar = () => {
     if (novoStatus === PedidoStatus.Falhou) {
@@ -66,7 +48,7 @@ export default function DialogMudarStatus({ open, onClose, pedidoId }: Props) {
     } else if (novoStatus === PedidoStatus.Entregue) {
       router.push(`/pedido/${pedidoId}/concluir`);
     } else {
-      mutation.mutate();
+      handleMudarStatus(pedidoId as string, novoStatus as string);
     }
   };
 
@@ -81,17 +63,29 @@ export default function DialogMudarStatus({ open, onClose, pedidoId }: Props) {
             label="Novo status"
             onChange={(e) => setNovoStatus(e.target.value as PedidoStatus)}
           >
-            {Object.values(PedidoStatus).map((status) => (
-              <MenuItem key={status} value={status}>
-                {formatarStatus(status)}
-              </MenuItem>
-            ))}
+            {Object.values(PedidoStatus)
+              .filter(
+                (status) =>
+                  status !== PedidoStatus.Criado &&
+                  status !== PedidoStatus.Cancelado
+              )
+              .map((status) => (
+                <MenuItem key={status} value={status}>
+                  {formatarStatus(status)}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
       </DialogContent>
       <DialogActions sx={{ justifyContent: "center" }}>
-        <Button onClick={onClose}>Cancelar</Button>
-        <Button onClick={handleConfirmar} disabled={!novoStatus}>
+        <Button onClick={onClose} disabled={isPending}>
+          Cancelar
+        </Button>
+        <Button
+          onClick={handleConfirmar}
+          disabled={!novoStatus}
+          loading={isPending}
+        >
           Confirmar
         </Button>
       </DialogActions>

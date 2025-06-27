@@ -13,13 +13,15 @@ import {
   Typography,
   CircularProgress,
   Box,
+  Button,
 } from "@mui/material";
-import { useGetPedidos } from "@/hooks/pedidos/useGetPedidos";
 import DialogMudarStatus from "@/components/pedidos/DialogMudarStatus";
 import { useRecusarPedido } from "@/hooks/pedidos/useRecusarPedido";
 import { Snackbar, Alert } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAceitarPedido } from "@/hooks/pedidos/useAceitarPedido";
+import { useGetPedidoById } from "@/hooks/pedidos/useGetPedidoById";
+import { useCancelarPedido } from "@/hooks/pedidos/useCancelarStatus";
 
 export default function PedidoPage() {
   const router = useRouter();
@@ -28,16 +30,19 @@ export default function PedidoPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const {
-    data: pedidos,
+    data: pedido,
     isLoading: isLoadingGetPedido,
     isError: isErrorGetPedido,
     error: errorGetPedido,
-  } = useGetPedidos(pedidoId as unknown as number);
+  } = useGetPedidoById(pedidoId as unknown as number);
   const { mutate: mutateRecusar, isPending: isPendingRecusar } =
     useRecusarPedido();
 
   const { mutate: mutateAceitar, isPending: isPendingAceitar } =
     useAceitarPedido();
+
+  const { mutate: mutateCancelar, isPending: isPendingCancelar } =
+    useCancelarPedido();
 
   const usuario =
     typeof window !== "undefined"
@@ -67,8 +72,6 @@ export default function PedidoPage() {
       </Container>
     );
 
-  const pedido = pedidos?.find((p) => String(p.id_pedido) === pedidoId);
-
   if (!pedido)
     return (
       <Container sx={{ mt: 4 }}>
@@ -76,24 +79,22 @@ export default function PedidoPage() {
       </Container>
     );
 
-  console.log(pedido);
-
   const handleRepetir = () => {
     console.log("repetir");
   };
 
   const handleCancelar = () => {
-    router.push("/dashboard");
+    mutateCancelar({ pedido_id: pedidoId as string });
   };
 
   const handleAceitar = () => {
     if (!pedidoId || !usuario?.id) return;
-    mutateAceitar({ pedidoId: pedidoId as string, idMotoboy: usuario.id });
+    mutateAceitar({ pedido_id: pedidoId as string, motoboy_id: usuario.id });
   };
 
   const handleRecusar = () => {
     if (!pedidoId || !usuario?.id) return;
-    mutateRecusar({ pedidoId: pedidoId as string, idMotoboy: usuario.id });
+    mutateRecusar({ pedido_id: pedidoId as string, motoboy_id: usuario.id });
   };
 
   const handleExcluir = () => {
@@ -141,7 +142,7 @@ export default function PedidoPage() {
             <InfoDoubleText title={"Status:"} info={pedido.status} />
             <InfoDoubleText
               title={"Preço final estimado:"}
-              info={"R$29,00"}
+              info={pedido.preco}
               bigInfo={true}
               extra={<InfoIconWithModal />}
             />
@@ -149,14 +150,17 @@ export default function PedidoPage() {
 
           {usuario?.tipo === "cliente" && (
             <>
-              <DualButton
-                onNext={handleRepetir}
-                onBack={onBack}
-                nextLabel={"Repetir"}
-              />
-              {pedido.status === PedidoStatus.Entregue && (
-                <LongButton label="Cancelar" onClick={handleCancelar} />
-              )}
+              <Button onClick={onBack}>Voltar</Button>
+
+              {pedido.status !== PedidoStatus.Entregue &&
+                pedido.status !== PedidoStatus.Cancelado &&
+                pedido.status !== PedidoStatus.Falhou && (
+                  <LongButton
+                    label="Cancelar"
+                    onClick={handleCancelar}
+                    loading={isPendingCancelar}
+                  />
+                )}
             </>
           )}
 
@@ -166,17 +170,20 @@ export default function PedidoPage() {
                 <LongButton label="Voltar" onClick={onBack} />
               ) : (
                 <>
-                  {pedido.motoboy_id !== undefined ? (
+                  {pedido.motoboy_id !== null ? (
                     <>
                       <LongButton
                         label="Voltar"
                         onClick={onBack}
                         color={"secondary"}
                       />
-                      <LongButton
-                        label="Mudar Status"
-                        onClick={handleChangeStatus}
-                      />
+                      {pedido.status !== PedidoStatus.Cancelado &&
+                        pedido.status !== PedidoStatus.Falhou && (
+                          <LongButton
+                            label="Mudar Status"
+                            onClick={handleChangeStatus}
+                          />
+                        )}
                     </>
                   ) : (
                     <>

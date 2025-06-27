@@ -20,27 +20,21 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-//to-do: typar
-export function useRecusarPedido() {
+export function useCancelarPedido() {
   const router = useRouter();
-  return useMutation<
-    Pedido[],
-    Error,
-    { pedido_id: string; motoboy_id: string }
-  >({
-    mutationFn: async ({ pedido_id, motoboy_id }) => {
-      const response = await api.post("/pedidos/recusar", {
+  return useMutation<Pedido[], Error, { pedido_id: string }>({
+    mutationFn: async ({ pedido_id }) => {
+      const response = await api.put("/pedidos/cliente/cancelar", {
         pedido_id,
-        motoboy_id,
       });
       return response.data.data;
     },
     onSuccess: () => {
-      enqueueSnackbar("Pedido recusado com sucesso!", { variant: "success" });
+      enqueueSnackbar("Pedido Cancelado com sucesso!", { variant: "success" });
       router.push("/dashboard/motoboy");
     },
     onError: (error) => {
-      enqueueSnackbar("Erro ao recusar o pedido.", { variant: "error" });
+      enqueueSnackbar("Erro ao cancelar o pedido.", { variant: "error" });
     },
   });
 }
