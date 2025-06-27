@@ -3,13 +3,19 @@
 import HeaderIcon from "@/components/HeaderIcon";
 import LongInput from "@/components/ui/LongInput";
 import Title from "@/components/ui/Title";
+import { useEditarUsuario } from "@/hooks/usuarios/useEditarUsuario";
 
 import { Button, Container, Stack } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { enqueueSnackbar } from "notistack";
+import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 export default function UserClientePageEdit() {
+  const searchParams = useSearchParams();
   const router = useRouter();
+  const editarUsuario = useEditarUsuario();
+  const [usuarioLogado, setUsuarioLogado] = useState<any>(null);
 
   const methods = useForm({
     defaultValues: {
@@ -19,11 +25,51 @@ export default function UserClientePageEdit() {
       email: "",
     },
   });
+  useEffect(() => {
+    const nome = searchParams.get("nome") || "";
+    const cpf = searchParams.get("cpf") || "";
+    const telefone = searchParams.get("telefone") || "";
+    const email = searchParams.get("email") || "";
 
-  const handleEditar = () => {
-    const data = methods.getValues();
-    console.log("Dados editados:", data);
-    // Aqui você pode enviar os dados para a API
+    methods.reset({ nome, cpf, telefone, email });
+  }, [searchParams]);
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("usuarioLogado") || "null");
+    if (user) {
+      setUsuarioLogado(user);
+      methods.reset({
+        nome: user.nome,
+        cpf: user.cpf,
+        telefone: user.telefone,
+        email: user.email,
+      });
+    }
+  }, []);
+
+  const handleEditar = async () => {
+    const values = methods.getValues();
+    console.log(usuarioLogado);
+
+    if (!usuarioLogado?.id) {
+      enqueueSnackbar("Usuário não identificado", { variant: "error" });
+      return;
+    }
+
+    try {
+      await editarUsuario.mutateAsync({
+        id: usuarioLogado.id,
+        nome: values.nome,
+        telefone: values.telefone,
+        email: values.email,
+      });
+
+      enqueueSnackbar("Perfil atualizado com sucesso", { variant: "success" });
+      router.back();
+    } catch (error) {
+      enqueueSnackbar("Erro ao atualizar o perfil", { variant: "error" });
+      console.error(error);
+    }
   };
 
   const onBack = () => {

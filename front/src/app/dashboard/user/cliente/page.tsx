@@ -6,21 +6,49 @@ import Title from "@/components/ui/Title";
 import { Button, Container, Stack } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useGetUsuarioById } from "@/hooks/usuarios/useGetUsuariosById";
 
 export default function UserClientePage() {
   const router = useRouter();
+  const [userId, setUserId] = useState<number | null>(null);
+
+  // Lê o ID do localStorage apenas uma vez
+  useEffect(() => {
+    const usuarioLocal = localStorage.getItem("usuarioLogado");
+    if (usuarioLocal) {
+      const parsed = JSON.parse(usuarioLocal);
+      setUserId(parsed?.id || null);
+    }
+  }, []);
+
+  const { data: usuario, isLoading } = useGetUsuarioById(userId as number);
 
   const methods = useForm({
     defaultValues: {
-      nome: "Maria Souza",
-      cpf: "987.654.321-00",
-      telefone: "(21) 99876-5432",
-      email: "maria@email.com",
+      nome: "",
+      cpf: "",
+      telefone: "",
+      email: "",
     },
   });
 
+  // Preenche o formulário assim que os dados chegam
+  useEffect(() => {
+    if (usuario) {
+      methods.reset({
+        nome: usuario.nome || "",
+        cpf: usuario.cpf || "",
+        telefone: usuario.telefone || "",
+        email: usuario.email || "",
+      });
+    }
+  }, [usuario, methods]);
+
   const handleClickEditar = () => {
-    router.push("cliente/editar");
+    router.push(
+      `cliente/editar?nome=${usuario?.nome}&cpf=${usuario?.cpf}&telefone=${usuario?.telefone}&email=${usuario?.email}`
+    );
   };
 
   const onBack = () => {

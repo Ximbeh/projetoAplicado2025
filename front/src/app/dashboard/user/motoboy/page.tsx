@@ -3,28 +3,70 @@
 import HeaderIcon from "@/components/HeaderIcon";
 import LongInput from "@/components/ui/LongInput";
 import Title from "@/components/ui/Title";
+import { useGetUsuarioById } from "@/hooks/usuarios/useGetUsuariosById";
 import { Button, Container, Stack } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 export default function UserMotoboyPage() {
   const router = useRouter();
+  const [userId, setUserId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const usuarioLocal = localStorage.getItem("usuarioLogado");
+    if (usuarioLocal) {
+      const parsed = JSON.parse(usuarioLocal);
+      setUserId(parsed?.id || null);
+    }
+  }, []);
+
+  const { data: usuario, isLoading } = useGetUsuarioById(userId as number);
+  console.log(usuario);
 
   const methods = useForm({
     defaultValues: {
-      nome: "João Motoboy",
-      cpf: "123.456.789-00",
-      telefone: "(11) 91234-5678",
-      email: "joao@email.com",
-      tipo_veiculo: "Moto",
-      placa_moto: "ABC-1234",
-      chassiVeiculo: "9BWZZZ377VT004251",
-      cnh: "12345678900",
+      nome: "",
+      cpf: "1",
+      telefone: "",
+      email: "",
+      tipo_veiculo: "",
+      placa_moto: "",
+      chassi: "",
+      cnh: "",
     },
   });
 
+  useEffect(() => {
+    if (usuario) {
+      methods.reset({
+        nome: usuario.nome || "",
+        cpf: usuario.cpf || "",
+        telefone: usuario.telefone || "",
+        email: usuario.email || "",
+        tipo_veiculo: usuario.tipo_veiculo || "",
+        placa_moto: usuario.placa_moto || "",
+        chassi: usuario.chassi || "",
+        cnh: usuario.cnh || "",
+      });
+    }
+  }, [usuario, methods]);
+
   const handleClickEditar = () => {
-    router.push("motoboy/editar");
+    if (!usuario) return;
+
+    const queryParams = new URLSearchParams({
+      nome: usuario.nome || "",
+      cpf: usuario.cpf || "",
+      telefone: usuario.telefone || "",
+      email: usuario.email || "",
+      tipo_veiculo: usuario.tipo_veiculo || "",
+      placa_moto: usuario.placa_moto || "",
+      chassi: usuario.chassi || "",
+      cnh: usuario.cnh || "",
+    });
+
+    router.push(`motoboy/editar?${queryParams.toString()}`);
   };
 
   const onBack = () => {
@@ -67,7 +109,7 @@ export default function UserMotoboyPage() {
           />
           <LongInput
             label="Chassi do veículo"
-            name="chassiVeiculo"
+            name="chassi"
             type="text"
             disabled
           />
