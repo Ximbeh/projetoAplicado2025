@@ -127,3 +127,43 @@ exports.alterarSenha = async (req, res, next) => {
     next(err);
   }
 };
+
+// Editar perfil do usuário (cliente ou motoboy)
+exports.editarPerfil = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    // Dados que vêm do frontend
+    const {
+      nome,
+      telefone,
+      endereco,
+      email,
+      tipo,
+      cnh,
+      placa,
+      tipoVeiculo,
+      chassi
+    } = req.body;
+
+    const placa_moto = placa || null;
+    const tipo_veiculo = tipoVeiculo || null;
+
+    // Atualização no banco
+    const [resultado] = await pool.query(
+      `UPDATE Usuarios SET
+        nome = ?, telefone = ?, endereco = ?, email = ?, tipo = ?,
+        cnh = ?, placa_moto = ?, tipo_veiculo = ?, chassi = ?
+      WHERE id_usuario = ?`,
+      [nome, telefone, endereco, email, tipo, cnh, placa_moto, tipo_veiculo, chassi, id]
+    );
+
+    if (resultado.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: 'Usuário não encontrado' });
+    }
+
+    res.json({ success: true, message: 'Perfil atualizado com sucesso' });
+  } catch (error) {
+    next(error);
+  }
+};

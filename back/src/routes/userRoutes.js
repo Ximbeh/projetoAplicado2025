@@ -18,4 +18,7 @@ router.delete('/usuarios', auth, userController.deletarUsuario);
 // Alterar senha do usuário logado
 router.put('/usuarios/senha', auth, userController.alterarSenha);
 
+// Editar perfil do usuário (cliente ou motoboy)
+router.put('/usuarios/:id', auth, userController.editarPerfil);
+
 module.exports = router;
