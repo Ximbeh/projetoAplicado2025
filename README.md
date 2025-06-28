@@ -51,7 +51,8 @@ A solução foi desenvolvida utilizando tecnologias modernas para garantir perfo
     * [TypeScript](https://www.typescriptlang.org/) 
     * [Tailwind CSS](https://tailwindcss.com/) 
     * [Material-UI](https://mui.com/) 
-    * [Mirage JS](https://miragejs.com/) 
+    * [Mirage JS](https://miragejs.com/)
+    * [Tanstack React Query]
 * **Backend**
     * [Node.js](https://nodejs.org/) (com [Express](https://expressjs.com/)) 
 * **Banco de Dados**
