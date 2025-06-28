@@ -63,7 +63,7 @@ A solução foi desenvolvida utilizando tecnologias modernas para garantir perfo
 
 ## 🏛️ Arquitetura da Solução
 
-A aplicação é um **website com design responsivo (mobile-first)** e um dashboard interativo. A arquitetura é baseada em serviços, com um frontend independente que se comunica com uma API backend. 
+A aplicação é um **website com design responsivo (mobile-first)** e um dashboard interativo. A arquitetura é baseada em serviços, com um frontend independente que se comunica com uma API backend. Alem disso usamos as seguintes APIs Externas: Openrouteservice - Apartir de latitude e longitude estipula uma rota determinando distancia e tempo.   Geocode - Converte cep em latitude e longitude 
 ## 🚀 Como Executar o Projeto
 
 Siga os passos abaixo para executar o projeto em seu ambiente local.
