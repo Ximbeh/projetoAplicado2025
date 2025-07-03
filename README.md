@@ -51,20 +51,19 @@ A solução foi desenvolvida utilizando tecnologias modernas para garantir perfo
     * [TypeScript](https://www.typescriptlang.org/) 
     * [Tailwind CSS](https://tailwindcss.com/) 
     * [Material-UI](https://mui.com/) 
-    * [Mirage JS](https://miragejs.com/) 
+    * [Mirage JS](https://miragejs.com/)
+    * [Tanstack React Query]
 * **Backend**
     * [Node.js](https://nodejs.org/) (com [Express](https://expressjs.com/)) 
 * **Banco de Dados**
     * [PostgreSQL](https://www.postgresql.org/) 
-    * [PostGIS](https://postgis.net/) (para cálculos geográficos) 
 * **APIs Externas**
     * [Google Maps API](https://maps.google.com/) (para cálculo de rotas e distâncias) 
     * [Serpro API](https://www.serpro.gov.br/) (para validação de CNH) 
 
 ## 🏛️ Arquitetura da Solução
 
-A aplicação é um **website com design responsivo (mobile-first)** e um dashboard interativo. A arquitetura é baseada em serviços, com um frontend independente que se comunica com uma API backend. O grande diferencial é o uso da extensão **PostGIS** no banco de dados PostgreSQL, que permite a realização de cálculos geográficos precisos para a precificação automática e dinâmica do frete, baseando-se em distância, peso e tempo.
-
+A aplicação é um **website com design responsivo (mobile-first)** e um dashboard interativo. A arquitetura é baseada em serviços, com um frontend independente que se comunica com uma API backend. Alem disso usamos as seguintes APIs Externas: Openrouteservice - Apartir de latitude e longitude estipula uma rota determinando distancia e tempo.   Geocode - Converte cep em latitude e longitude 
 ## 🚀 Como Executar o Projeto
 
 Siga os passos abaixo para executar o projeto em seu ambiente local.
