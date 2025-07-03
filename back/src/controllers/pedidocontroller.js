@@ -346,10 +346,10 @@ exports.concluirPedido = async (req, res, next) => {
     );
     fs.writeFileSync(filePath, imagemBuffer);
 
-    await pool.query(`UPDATE Pedidos SET status = ? WHERE id_pedido = ?`, [
-      status,
-      pedido_id,
-    ]);
+     await pool.query(
+      `UPDATE Pedidos SET status = ?, comprovante_imagem = ? WHERE id_pedido = ?`,
+      [status, `/uploads/comprovante_${pedido_id}.png`, pedido_id]
+    );
     await pool.query(
       `INSERT INTO HistoricoEntregas (pedido_id, status) VALUES (?, ?)`,
       [pedido_id, status]

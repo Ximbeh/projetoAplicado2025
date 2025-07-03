@@ -58,12 +58,6 @@ exports.cadastrarUsuario = async (req, res) => {
       return res.status(400).json({ erro: "CPF já cadastrado" });
     }
 
-    // Validação básica de CPF (11 dígitos)
-    const cpfValido = /^\d{11}$/.test(cpf);
-    if (!cpfValido) {
-      return res.status(400).json({ erro: "CPF inválido" });
-    }
-
     // (Opcional) Validação de placa_moto veicular — formato Mercosul simples
     if (
       tipo === "motoboy" &&
